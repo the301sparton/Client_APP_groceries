@@ -51,7 +51,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
     @SuppressLint("StaticFieldLeak")
     public ItemAdapter(List<ShopItem> itemList, Activity activity) {
         this.itemList = itemList;
-        List<CartItem> cartItemList = new ArrayList<>();
+        List<CartItem> cartItemList;
         ctx = activity;
         try {
             final AppDataBase db = Room.databaseBuilder(ctx,
