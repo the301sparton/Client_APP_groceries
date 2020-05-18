@@ -2,9 +2,13 @@ package com.vaicomp.shopclient;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,10 +17,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.vaicomp.shopclient.db.AppDataBase;
+import com.vaicomp.shopclient.db.ShopItem;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
@@ -75,12 +83,61 @@ public class ProfileDetailActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 preferenceManager.setIsLoggedIn(context, true);
                                 Toasty.success(getApplicationContext(),"Profile Details Saved!",Toasty.LENGTH_SHORT).show();
-                                startActivity(new Intent(ProfileDetailActivity.this, HomeActivity.class));
+                                loadAllDataToLocalDB(ProfileDetailActivity.this);
                                 finish();
                             }
                         });
                     }
                 });
+            }
+        });
+    }
+
+
+    @SuppressLint("StaticFieldLeak")
+    private void loadAllDataToLocalDB(final Activity activity) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                if(list1.size() != 0){
+                    final AppDataBase local_db = Room.databaseBuilder(getApplicationContext(),
+                            AppDataBase.class, "schoolDB").fallbackToDestructiveMigration().build();
+
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            local_db.shopItemDao().nukeTable();
+                            return null;
+                        }
+                    }.execute();
+
+                    final ShopItem[] itemList = new ShopItem[list1.size()];
+                    int itr = 0;
+                    for(DocumentSnapshot ds : list1) {
+                        ShopItem item = new ShopItem();
+                        item.setItemId(ds.getId());
+                        item.setItemName(String.valueOf(ds.get("itemName")));
+                        item.setCategory(String.valueOf(ds.get("category")));
+                        item.setImageUrl(String.valueOf(ds.get("photoUrl")));
+                        item.setAmount((double) 0);
+                        item.setQuantity(0);
+                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
+                        itemList[itr] = item;
+                        itr++;
+                    }
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            local_db.shopItemDao().insertAll(itemList);
+                            return null;
+                        }
+                    }.execute();
+
+                    startActivity(new Intent(activity, HomeActivity.class));
+                }
             }
         });
     }

@@ -1,10 +1,12 @@
 package com.vaicomp.shopclient;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -13,6 +15,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -20,7 +26,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.vaicomp.shopclient.Adapters.ItemAdapter;
+import com.vaicomp.shopclient.db.AppDataBase;
+import com.vaicomp.shopclient.db.ShopItem;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
@@ -70,8 +87,52 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void loadAllDataToLocalDB(Activity activity) {
+    @SuppressLint("StaticFieldLeak")
+    private void loadAllDataToLocalDB(final Activity activity) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                if(list1.size() != 0){
+                    final AppDataBase local_db = Room.databaseBuilder(getApplicationContext(),
+                            AppDataBase.class, "schoolDB").fallbackToDestructiveMigration().build();
+
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            local_db.shopItemDao().nukeTable();
+                            return null;
+                        }
+                    }.execute();
+
+                    final ShopItem[] itemList = new ShopItem[list1.size()];
+                    int itr = 0;
+                    for(DocumentSnapshot ds : list1) {
+                        ShopItem item = new ShopItem();
+                        item.setItemId(ds.getId());
+                        item.setItemName(String.valueOf(ds.get("itemName")));
+                        item.setCategory(String.valueOf(ds.get("category")));
+                        item.setImageUrl(String.valueOf(ds.get("photoUrl")));
+                        item.setAmount((double) 0);
+                        item.setQuantity(0);
+                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
+                        itemList[itr] = item;
+                        itr++;
+                    }
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            local_db.shopItemDao().insertAll(itemList);
+                            return null;
+                        }
+                    }.execute();
+
+                    startActivity(new Intent(activity, HomeActivity.class));
+                }
+            }
+        });
     }
 
     @Override
