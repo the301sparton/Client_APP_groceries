@@ -104,7 +104,7 @@ public class ProfileDetailActivity extends AppCompatActivity {
                 List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
                 if(list1.size() != 0){
                     final AppDataBase local_db = Room.databaseBuilder(getApplicationContext(),
-                            AppDataBase.class, "schoolDB").fallbackToDestructiveMigration().build();
+                            AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
 
                     new AsyncTask<Void, Void, Void>() {
                         @Override
@@ -118,13 +118,15 @@ public class ProfileDetailActivity extends AppCompatActivity {
                     int itr = 0;
                     for(DocumentSnapshot ds : list1) {
                         ShopItem item = new ShopItem();
+
                         item.setItemId(ds.getId());
                         item.setItemName(String.valueOf(ds.get("itemName")));
                         item.setCategory(String.valueOf(ds.get("category")));
                         item.setImageUrl(String.valueOf(ds.get("photoUrl")));
+                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
                         item.setAmount((double) 0);
                         item.setQuantity(0);
-                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
+
                         itemList[itr] = item;
                         itr++;
                     }

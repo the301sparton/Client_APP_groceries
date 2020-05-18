@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
 import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.AppDataBase;
+import com.vaicomp.shopclient.db.CartItem;
 import com.vaicomp.shopclient.db.ShopItem;
 
 import java.util.ArrayList;
@@ -56,12 +57,23 @@ public class HomeFragment extends Fragment {
 
 
         final AppDataBase db = Room.databaseBuilder(getActivity(),
-                AppDataBase.class, "schoolDB").fallbackToDestructiveMigration().build();
+                AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
         try {
             list = new AsyncTask<Void, Void, List<ShopItem>>() {
                 @Override
                 protected List<ShopItem> doInBackground(Void... voids) {
-                    return db.shopItemDao().getAll();
+                    List<CartItem> cartItems = db.cartItemDao().getAll();
+                    List<ShopItem> allItems = db.shopItemDao().getAll();
+                    for(CartItem cartItem : cartItems){
+                        for(ShopItem shopItem : allItems){
+                            if(cartItem.getItemId().equals(shopItem.getItemId())){
+                                shopItem.setQuantity(cartItem.getQuantity());
+                                shopItem.setAmount(cartItem.getAmount());
+                                shopItem.setRate(cartItem.getRate());
+                            }
+                        }
+                    }
+                    return allItems;
                 }
             }.execute().get();
             fireBaseList.addAll(list);

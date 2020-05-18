@@ -8,7 +8,7 @@ import java.util.List;
 
 @Dao
 public interface ShopItemDao {
-    @Query("SELECT * FROM ShopItem")
+    @Query("SELECT * FROM shopitem")
     List<ShopItem> getAll();
 
     @Insert
