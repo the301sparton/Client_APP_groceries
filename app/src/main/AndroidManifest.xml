@@ -10,14 +10,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".CategoryPicker_Alert"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
+        <activity
             android:name=".HomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:label="@string/title_activity_layout_main" />
-
-        <activity android:name=".ProfileDetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
-        <activity android:name=".SplashActivity"
+            android:label="@string/title_activity_layout_main"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ProfileDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

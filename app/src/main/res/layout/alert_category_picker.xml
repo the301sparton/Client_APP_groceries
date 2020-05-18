@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="450dp"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/curve_white_no_border"
+    tools:context=".CategoryPicker_Alert">
+
+    <TextView
+        android:id="@+id/topTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Category"
+        android:textColor="#85929E"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:textSize="26sp"
+        android:fontFamily="@font/josefinsans"/>
+
+    <View
+        android:id="@+id/seprator"
+        android:layout_below="@id/topTitle"
+        android:layout_margin="10dp"
+        android:background="#D6DBDF"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/categoryList"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        android:layout_height="match_parent"
+        android:layout_above="@id/applyFilter"
+        android:layout_below="@id/seprator" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/applyFilter"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="@font/josefinsansregular"
+        android:background="@drawable/round_btn"
+        android:text="Apply Filter"
+        android:textColor="#fff"
+        android:textAllCaps="false"
+        android:layout_margin="10dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>

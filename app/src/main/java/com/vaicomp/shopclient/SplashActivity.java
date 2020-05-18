@@ -33,11 +33,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
 import com.vaicomp.shopclient.db.AppDataBase;
+import com.vaicomp.shopclient.db.CategoryFilter;
 import com.vaicomp.shopclient.db.ShopItem;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import es.dmoral.toasty.Toasty;
 
@@ -54,7 +57,6 @@ public class SplashActivity extends AppCompatActivity {
             TextView tv = findViewById(R.id.versionText);
             tv.setText(vName);
 
-            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             if (!preferenceManager.getIsLoggedIn(getApplicationContext())) {
                 SignInButton signInButton = findViewById(R.id.sign_in_button);
                 signInButton.setVisibility(View.VISIBLE);
@@ -88,15 +90,16 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void loadAllDataToLocalDB(final Activity activity) {
+    static void loadAllDataToLocalDB(final Activity activity) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
         db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
                 if(list1.size() != 0){
-                    final AppDataBase local_db = Room.databaseBuilder(getApplicationContext(),
+                    final AppDataBase local_db = Room.databaseBuilder(activity.getBaseContext(),
                             AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
 
                     new AsyncTask<Void, Void, Void>() {
@@ -123,15 +126,32 @@ public class SplashActivity extends AppCompatActivity {
                         itemList[itr] = item;
                         itr++;
                     }
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            local_db.shopItemDao().insertAll(itemList);
-                            return null;
-                        }
-                    }.execute();
 
-                    startActivity(new Intent(activity, HomeActivity.class));
+                    db.collection("category").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                            if(list1.size() != 0) {
+                                final CategoryFilter[] categoryFilterList = new CategoryFilter[list1.size()];
+                                int itr = 0;
+                                for(DocumentSnapshot ds : list1){
+                                    categoryFilterList[itr] = new CategoryFilter(String.valueOf(ds.get("categoryName")),false);
+                                    itr++;
+                                }
+                                new AsyncTask<Void, Void, Void>() {
+                                    @Override
+                                    protected Void doInBackground(Void... voids) {
+                                        local_db.categoryFilterDao().insertAll(categoryFilterList);
+                                        local_db.shopItemDao().insertAll(itemList);
+                                        activity.startActivity(new Intent(activity, HomeActivity.class));
+                                        activity.finish();
+                                        return null;
+                                    }
+                                }.execute();
+                            }
+                        }
+                    });
+
                 }
             }
         });

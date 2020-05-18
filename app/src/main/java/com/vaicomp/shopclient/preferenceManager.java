@@ -3,6 +3,10 @@ package com.vaicomp.shopclient;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import java.util.HashSet;
+import java.util.Set;
+
 class preferenceManager {
 
     static void setIsLoggedIn(Context context, boolean isLoggedIn){
@@ -23,6 +27,16 @@ class preferenceManager {
     static String getUID(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getString("UID","");
+    }
+
+    static void setCategoryList(Context context, Set<String> categoryList){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putStringSet("categoryList", categoryList).apply();
+    }
+
+    static Set<String> getCategoryList(Context context){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getStringSet("categoryList", new HashSet<String>());
     }
 
     static void setDisplayName(Context context, String secret){

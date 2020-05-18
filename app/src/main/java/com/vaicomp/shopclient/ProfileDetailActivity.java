@@ -60,7 +60,7 @@ public class ProfileDetailActivity extends AppCompatActivity {
         saveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // preferenceManager.setUID(context, account.getId());
+                //preferenceManager.setUID(context, account.getId());
                 preferenceManager.setDisplayName(context,displayName.getText().toString());
                 preferenceManager.setEmailId(context, emailId.getText().toString());
                 preferenceManager.setAddress(context, address.getText().toString());
@@ -83,8 +83,7 @@ public class ProfileDetailActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 preferenceManager.setIsLoggedIn(context, true);
                                 Toasty.success(getApplicationContext(),"Profile Details Saved!",Toasty.LENGTH_SHORT).show();
-                                loadAllDataToLocalDB(ProfileDetailActivity.this);
-                                finish();
+                                SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
                             }
                         });
                     }
@@ -94,55 +93,7 @@ public class ProfileDetailActivity extends AppCompatActivity {
     }
 
 
-    @SuppressLint("StaticFieldLeak")
-    private void loadAllDataToLocalDB(final Activity activity) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
-                if(list1.size() != 0){
-                    final AppDataBase local_db = Room.databaseBuilder(getApplicationContext(),
-                            AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            local_db.shopItemDao().nukeTable();
-                            return null;
-                        }
-                    }.execute();
-
-                    final ShopItem[] itemList = new ShopItem[list1.size()];
-                    int itr = 0;
-                    for(DocumentSnapshot ds : list1) {
-                        ShopItem item = new ShopItem();
-
-                        item.setItemId(ds.getId());
-                        item.setItemName(String.valueOf(ds.get("itemName")));
-                        item.setCategory(String.valueOf(ds.get("category")));
-                        item.setImageUrl(String.valueOf(ds.get("photoUrl")));
-                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
-                        item.setAmount((double) 0);
-                        item.setQuantity(0);
-
-                        itemList[itr] = item;
-                        itr++;
-                    }
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            local_db.shopItemDao().insertAll(itemList);
-                            return null;
-                        }
-                    }.execute();
-
-                    startActivity(new Intent(activity, HomeActivity.class));
-                }
-            }
-        });
-    }
 }
 
 

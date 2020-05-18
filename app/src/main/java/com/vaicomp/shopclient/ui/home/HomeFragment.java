@@ -1,6 +1,7 @@
 package com.vaicomp.shopclient.ui.home;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,6 +21,7 @@ import androidx.room.Room;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
+import com.vaicomp.shopclient.CategoryPicker_Alert;
 import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
@@ -35,6 +38,7 @@ public class HomeFragment extends Fragment {
     private List<ShopItem> list, searchList, fireBaseList;
     private ItemAdapter adapter;
     private TextInputEditText searchBar;
+    private ImageView filterBtn;
     private Button clear;
     @SuppressLint("StaticFieldLeak")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,11 +51,19 @@ public class HomeFragment extends Fragment {
         listView = root.findViewById(R.id.list);
         searchBar = root.findViewById(R.id.searchBar);
         clear = root.findViewById(R.id.calc_clear_txt_Prise);
+        filterBtn = root.findViewById(R.id.filterBtn);
 
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchBar.setText("");
+            }
+        });
+
+        filterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), CategoryPicker_Alert.class));
             }
         });
 
