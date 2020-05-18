@@ -13,9 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,7 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
 import com.vaicomp.shopclient.R;
-import java.io.Serializable;
+import com.vaicomp.shopclient.db.ShopItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,89 +127,6 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
-
-    @Entity
-    public static class ShopItem implements Serializable {
-        @PrimaryKey
-        private String itemId;
-
-        @ColumnInfo(name = "itemName")
-        private String itemName;
-
-        @ColumnInfo(name = "category")
-        private String category;
-
-        @ColumnInfo(name = "imageUrl")
-        private String imageUrl;
-
-        @ColumnInfo(name = "rate")
-        private Double rate;
-
-        @ColumnInfo(name = "rate")
-        private Double amount;
-
-        @ColumnInfo(name = "quantity")
-        private Integer quantity;
-
-
-        public String getItemName() {
-            return itemName;
-        }
-
-        public void setItemName(String itemName) {
-            this.itemName = itemName;
-        }
-
-        public String getImageUrl() {
-            return imageUrl;
-        }
-
-        public void setImageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
-        }
-
-        public Double getRate() {
-            return rate;
-        }
-
-        public void setRate(Double rate) {
-            this.rate = rate;
-        }
-
-        public Double getAmount() {
-            return amount;
-        }
-
-        public void setAmount(Double amount) {
-            this.amount = amount;
-        }
-
-        public Integer getQuantity() {
-            return quantity;
-        }
-
-        public void setQuantity(Integer quantity) {
-            this.quantity = quantity;
-        }
-
-        public String getCategory() {
-            return category;
-        }
-
-        public void setCategory(String category) {
-            this.category = category;
-        }
-
-        public String getItemId() {
-            return itemId;
-        }
-
-        public void setItemId(String itemId) {
-            this.itemId = itemId;
-        }
-    }
-
-
 
 
 }

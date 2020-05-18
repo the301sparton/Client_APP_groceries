@@ -14,12 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.squareup.picasso.Picasso;
 import com.vaicomp.shopclient.R;
+import com.vaicomp.shopclient.db.ShopItem;
 import com.vaicomp.shopclient.ui.home.HomeFragment;
 
 import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> {
-    private List<HomeFragment.ShopItem> itemList;
+    private List<ShopItem> itemList;
     private Activity ctx;
 
     private int itemCount = 0;
@@ -42,7 +43,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
 
     }
 
-    public ItemAdapter(List<HomeFragment.ShopItem> itemList, Activity activity) {
+    public ItemAdapter(List<ShopItem> itemList, Activity activity) {
         this.itemList = itemList;
         ctx = activity;
     }
@@ -63,7 +64,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         Log.i(position + " ==> " , itemList.get(position).getItemName());
 
-        HomeFragment.ShopItem item = itemList.get(position);
+        ShopItem item = itemList.get(position);
         holder.name.setText(item.getItemName());
         holder.quantity.setNumber(String.valueOf(item.getQuantity()));
         holder.rate.setText(String.valueOf(item.getRate()));
@@ -89,14 +90,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
         });
     }
 
-    private void updateCartDetails(List<HomeFragment.ShopItem> list) {
+    private void updateCartDetails(List<ShopItem> list) {
 
         TextView totalItems, totalamount;
         Toolbar toolbarTop = ctx.findViewById(R.id.toolbar);
         totalItems = toolbarTop.findViewById(R.id.totalItems);
         totalamount = toolbarTop.findViewById(R.id.totalAmount);
 
-        for(HomeFragment.ShopItem item : list){
+        for(ShopItem item : list){
             if(item.getQuantity() > 0) {
                 itemCount++;
                 amount += item.getAmount();
