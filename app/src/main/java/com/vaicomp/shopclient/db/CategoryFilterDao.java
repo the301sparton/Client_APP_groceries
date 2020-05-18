@@ -19,6 +19,9 @@ public interface CategoryFilterDao {
     @Query("DELETE FROM categoryfilter")
     void nukeTable();
 
+    @Query("SELECT * FROM categoryfilter WHERE isEnabled = 1")
+    List<CategoryFilter> getEnabled();
+
     @Delete
     void delete(CategoryFilter user);
 }

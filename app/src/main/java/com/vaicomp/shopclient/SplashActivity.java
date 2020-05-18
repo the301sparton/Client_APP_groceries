@@ -106,6 +106,7 @@ public class SplashActivity extends AppCompatActivity {
                         @Override
                         protected Void doInBackground(Void... voids) {
                             local_db.shopItemDao().nukeTable();
+                            local_db.categoryFilterDao().nukeTable();
                             return null;
                         }
                     }.execute();
