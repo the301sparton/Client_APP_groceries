@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="30dp"
+    tools:context=".ProfileDetailActivity">
+
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/progress_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:spb_color="@color/colorPrimaryDark"
+        app:spb_mirror_mode="false"
+        app:spb_progressiveStart_activated="true"
+        app:spb_progressiveStart_speed="1.5"
+        app:spb_progressiveStop_speed="4.0"
+        app:spb_reversed="false"
+        app:spb_sections_count="3"
+        app:spb_speed="2"
+        app:spb_stroke_separator_length="4dp"
+        app:spb_stroke_width="4dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/top_img"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_profile">
+
+    </androidx.appcompat.widget.AppCompatImageView>
+
+    <TextView
+        android:id="@+id/introText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_img"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/josefinsansitalic"
+        android:text="Verify your profile."
+        android:textColor="@color/textColorDark"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/introText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/introText"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/josefinsansitalic"
+        android:text="Always better to be sure!"
+        android:textColor="@color/textColorDark"
+        android:textSize="18sp">
+
+    </TextView>
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/displayName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/introText2"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/josefinsansregular"
+                android:hint="Full Name"
+                android:inputType="text" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/displayName"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/josefinsansregular"
+                android:hint="Email - ID"
+                android:inputType="textEmailAddress" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/emailId"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/josefinsansregular"
+                android:hint="Phone Number"
+                android:inputType="phone" />
+
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phoneNumber"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/josefinsansregular"
+                android:hint="Address"
+                android:inputType="textPostalAddress" />
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/saveProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/round_btn"
+        android:fontFamily="@font/josefinsansregular"
+        android:text="Save Profile"
+        android:textAllCaps="false"
+        android:textColor="#fff"
+        android:textSize="20sp" />
+
+
+</RelativeLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+    <LinearLayout
+        android:id="@+id/filterBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="15"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="13"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:padding="5dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Search.."
+                android:fontFamily="@font/josefinsans"
+                android:id="@+id/searchBar">
+            </com.google.android.material.textfield.TextInputEditText>
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/calc_clear_txt_Prise"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="end|center_vertical"
+                android:background="@drawable/ic_delete_text" />
+
+        </FrameLayout>
+
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:padding="5dp"
+            android:src="@drawable/ic_settings"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        android:layout_height="match_parent"
+        android:layout_below="@id/filterBar" />
+
+
+</RelativeLayout>

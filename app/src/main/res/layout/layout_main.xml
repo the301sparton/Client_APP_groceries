@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:gravity="start"
+        android:background="@color/colorPrimary_a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:id="@+id/saveProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:weightSum="10" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/totalItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"
+                    android:text="0 Item"
+                    android:fontFamily="@font/josefinsans"
+                    android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/totalAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"
+                    android:text="0 Rs plus delivery"
+                    android:fontFamily="@font/josefinsans"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:gravity="end"
+                android:textColor="#FFF"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:text="View Cart"
+                android:fontFamily="@font/josefinsans"
+                android:textSize="18sp"/>
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@id/nav_view"
+        app:navGraph="@navigation/mobile_navigation" />
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:theme="@style/Widget.BottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        app:itemIconTint="@drawable/selector"
+        app:itemTextColor="#000"
+        android:background="?android:attr/windowBackground"
+        android:layout_alignParentBottom="true"
+        app:itemRippleColor="@color/textColorDark"
+        app:menu="@menu/bottom_nav_menu" />
+
+</RelativeLayout>
