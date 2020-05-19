@@ -34,6 +34,8 @@ public class ProfileDetailActivity extends AppCompatActivity {
 
     Context context;
     SmoothProgressBar progress_horizontal;
+    Boolean toInsert = true;
+    String accountId = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,21 @@ public class ProfileDetailActivity extends AppCompatActivity {
         phoneNum.setText(preferenceManager.getPhoneNumber(context));
         address.setText(preferenceManager.getAdress(context));
 
+
+        db.collection("users").whereEqualTo("UID",preferenceManager.getUID(context)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(queryDocumentSnapshots.size() > 0) {
+                    DocumentSnapshot snapshot = queryDocumentSnapshots.getDocuments().get(0);
+                    toInsert = false;
+                    accountId = snapshot.getId();
+                    phoneNum.setText(String.valueOf(snapshot.get("phoneNumber")));
+                    address.setText(String.valueOf(snapshot.get("address")));
+                }
+
+            }
+        });
+
         Button saveProfile = findViewById(R.id.saveProfile);
 
         saveProfile.setOnClickListener(new View.OnClickListener() {
@@ -75,19 +92,26 @@ public class ProfileDetailActivity extends AppCompatActivity {
                 user.put("address",address.getText().toString());
                 user.put("photoUrl", preferenceManager.getPhotoUrl(context));
 
-                db.collection("users").whereEqualTo("UID",preferenceManager.getUID(context)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        queryDocumentSnapshots.getDocuments().get(0).getReference().update(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                preferenceManager.setIsLoggedIn(context, true);
-                                Toasty.success(getApplicationContext(),"Profile Details Saved!",Toasty.LENGTH_SHORT).show();
-                                SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
-                            }
-                        });
-                    }
-                });
+                if(toInsert){
+                    db.collection("users").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            preferenceManager.setIsLoggedIn(context, true);
+                            Toasty.success(getApplicationContext(), "Profile Details Saved!", Toasty.LENGTH_SHORT).show();
+                            SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
+                        }
+                    });
+                }
+                else {
+                    db.collection("users").document(accountId).update(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            preferenceManager.setIsLoggedIn(context, true);
+                            Toasty.success(getApplicationContext(), "Profile Details Saved!", Toasty.LENGTH_SHORT).show();
+                            SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
+                        }
+                    });
+                }
             }
         });
     }

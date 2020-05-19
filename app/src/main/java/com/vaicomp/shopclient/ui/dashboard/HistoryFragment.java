@@ -23,9 +23,7 @@ import com.vaicomp.shopclient.Adapters.ClickListener;
 import com.vaicomp.shopclient.Adapters.HistoryAdapter;
 import com.vaicomp.shopclient.Adapters.RecyclerTouchListener;
 import com.vaicomp.shopclient.CartActivity;
-import com.vaicomp.shopclient.HomeActivity;
 import com.vaicomp.shopclient.R;
-import com.vaicomp.shopclient.db.CategoryFilter;
 import com.vaicomp.shopclient.db.OrderModal;
 import com.vaicomp.shopclient.preferenceManager;
 
