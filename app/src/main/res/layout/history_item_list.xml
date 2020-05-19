@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:elevation="2dp"
+    android:background="@drawable/curve_white_no_border">
+
+    <TextView
+        android:id="@+id/uname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="#000"
+        android:text="Chaitanya Deshpande"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/uname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="@color/colorPrimary"
+        android:text="Near Kalibadi, Kanhartoli Gondia - 441614."
+        android:textSize="14sp"/>
+
+    <View
+        android:id="@+id/seprator"
+        android:layout_below="@id/address"
+        android:layout_marginTop="10dp"
+        android:background="#D6DBDF"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <TextView
+        android:id="@+id/itemsTitle"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/seprator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="@color/colorPrimary"
+        android:text="ITEMS"
+        android:textSize="14sp"/>
+    <TextView
+        android:id="@+id/itemsValue"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/itemsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="#000"
+        android:text="7 Items"
+        android:textSize="14sp"/>
+
+
+    <TextView
+        android:id="@+id/orderedOnTitle"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/itemsValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="@color/colorPrimary"
+        android:text="ORDERED ON"
+        android:textSize="14sp"/>
+    <TextView
+        android:id="@+id/orderedOn"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/orderedOnTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="#000"
+        android:text="Feb, 12 2020 01:29 PM"
+        android:textSize="14sp"/>
+
+
+    <TextView
+        android:id="@+id/totalAmountTitle"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/orderedOn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="@color/colorPrimary"
+        android:text="TOTAL AMOUNT"
+        android:textSize="14sp"/>
+    <TextView
+        android:id="@+id/totalAmount"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/totalAmountTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="#000"
+        android:text="2500"
+        android:textSize="14sp"/>
+
+    <View
+        android:id="@+id/seprator1"
+        android:layout_below="@id/totalAmount"
+        android:layout_marginTop="10dp"
+        android:background="#D6DBDF"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="10"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/seprator1"
+        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/orderState"
+        android:layout_marginTop="5dp"
+        android:layout_width="0dp"
+        android:layout_weight="7"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="#000"
+        android:text="Out for Delivery"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/repeatOrder"
+        android:layout_gravity="right"
+        android:layout_marginTop="5dp"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="@color/colorPrimary"
+        android:text="Repeat Order"
+        android:textSize="14sp"/>
+    </LinearLayout>
+</RelativeLayout>

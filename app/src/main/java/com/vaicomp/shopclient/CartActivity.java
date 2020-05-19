@@ -88,6 +88,7 @@ public class CartActivity extends AppCompatActivity {
                placeOrderBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        placeOrderBtn.setEnabled(false);
                         final Context context = getApplicationContext();
                         if(order_id.equals("NA")){
 
@@ -128,6 +129,7 @@ public class CartActivity extends AppCompatActivity {
                                                     new SimpleDateFormat(pattern, new Locale("en", "IN"));
                                             tv.setText(simpleDateFormat.format(orderModal.getDate()));
 
+                                            placeOrderBtn.setEnabled(true);
                                             Toasty.success(context, "Order Placed Successfully!", Toasty.LENGTH_SHORT).show();
                                             initViews(orderModal.getOrderId());
                                         }
@@ -141,6 +143,7 @@ public class CartActivity extends AppCompatActivity {
                                     .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
+                                    placeOrderBtn.setEnabled(true);
                                     Toasty.success(context, "Order Canceled Successfully", Toasty.LENGTH_SHORT).show();
                                     finish();
                                 }

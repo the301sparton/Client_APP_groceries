@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import java.util.HashSet;
 import java.util.Set;
 
-class preferenceManager {
+public class preferenceManager {
 
     static void setIsLoggedIn(Context context, boolean isLoggedIn){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -24,7 +24,7 @@ class preferenceManager {
         sharedPreferences.edit().putString("UID", secret).apply();
     }
 
-    static String getUID(Context context){
+    public static String getUID(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getString("UID","");
     }
