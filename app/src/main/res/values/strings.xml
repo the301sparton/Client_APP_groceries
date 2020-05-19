@@ -4,4 +4,6 @@
     <string name="title_home">Shop</string>
     <string name="title_dashboard">History</string>
     <string name="title_notifications">Notifications</string>
+    <string name="orderInCart">Order is in cart.</string>
+    <string name="placeOrder">Place Order</string>
 </resources>

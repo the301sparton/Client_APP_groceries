@@ -2,6 +2,7 @@ package com.vaicomp.shopclient.Adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -62,7 +63,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
                     return db.cartItemDao().getAll();
                 }
             }.execute().get();
-            updateCartDetails(cartItemList);
+            updateCartDetails(cartItemList, ctx);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -88,8 +89,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
 
         holder.name.setText(item.getItemName());
         holder.quantity.setNumber(String.valueOf(item.getQuantity()));
-        holder.rate.setText(String.valueOf(item.getRate()));
-        holder.amount.setText(item.getAmount() + " Rs.");
+        holder.rate.setText("Rate: ₹"+ item.getRate());
+        holder.amount.setText("₹"+item.getAmount());
         Picasso.get()
                 .load(item.getImageUrl())
                 .resize(350, 350)
@@ -143,13 +144,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
                     }.execute();
                 }
 
-                holder.amount.setText(cartItem.getAmount() + " Rs,");
-                updateCartDetails(cartItemList);
+                holder.amount.setText("₹"+cartItem.getAmount());
+                updateCartDetails(cartItemList, ctx);
             }
         });
     }
 
-    private void updateCartDetails(List<CartItem> list) {
+    public static void updateCartDetails(List<CartItem> list, Activity ctx) {
          int itemCount = 0;
          Double amount = (double) 0;
 
@@ -171,7 +172,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
             totalItems.setText(itemCount + " Item");
         }
 
-        totalamount.setText(amount + " Rs.");
+        totalamount.setText("₹"+amount);
     }
 
 

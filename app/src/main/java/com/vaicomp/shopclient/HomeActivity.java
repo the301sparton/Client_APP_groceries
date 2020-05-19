@@ -11,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,7 +20,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.vaicomp.shopclient.Adapters.CartAdapter;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
+import com.vaicomp.shopclient.db.AppDataBase;
+import com.vaicomp.shopclient.db.CartItem;
 import com.vaicomp.shopclient.ui.home.HomeFragment;
 
 import androidx.annotation.NonNull;
@@ -31,10 +36,14 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import es.dmoral.toasty.Toasty;
 
 public class HomeActivity extends AppCompatActivity {
     @Override
@@ -44,7 +53,37 @@ public class HomeActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
+        LinearLayout viewCart = toolbar.findViewById(R.id.viewCart);
+        viewCart.setOnClickListener(new View.OnClickListener() {
+
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            public void onClick(View v) {
+                final AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+                        AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+                List<CartItem> categoryFilterList = new ArrayList<>();
+                try {
+                    categoryFilterList = new AsyncTask<Void, Void, List<CartItem>>() {
+                        @Override
+                        protected List<CartItem> doInBackground(Void... voids) {
+                            return db.cartItemDao().getAll();
+                        }
+                    }.execute().get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(categoryFilterList.size() > 0){
+                    startActivity(new Intent(HomeActivity.this, CartActivity.class)
+                            .putExtra("ORDER_ID", "NA"));
+                }
+                else{
+                    Toasty.warning(getApplicationContext(), "No Items In Cart",Toasty.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard)

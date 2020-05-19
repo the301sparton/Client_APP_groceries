@@ -118,6 +118,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 protected List<ShopItem> doInBackground(Void... voids) {
                     List<CartItem> cartItems = db.cartItemDao().getAll();
+                    ItemAdapter.updateCartDetails(cartItems,getActivity());
                     List<ShopItem> allItems = db.shopItemDao().getAll();
                     List<CategoryFilter> categoryFilterList = db.categoryFilterDao().getEnabled();
                     for (CartItem cartItem : cartItems) {
@@ -150,6 +151,9 @@ public class HomeFragment extends Fragment {
                     return finalList;
                 }
             }.execute().get();
+
+
+
             if(adapter == null){
                 list = new ArrayList<>();
                 list.addAll(fireBaseList);

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".CartActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/shopName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:textColor="#000"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/shopAddress"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefinsans"
+        android:layout_below="@id/shopName"
+        android:textColor="#000"
+        android:textSize="14sp"/>
+
+        <View
+            android:id="@+id/seprator"
+            android:layout_below="@id/shopAddress"
+            android:layout_marginTop="10dp"
+            android:background="#D6DBDF"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/orderState"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:layout_below="@id/seprator"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/yourOrder"
+            android:layout_marginTop="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Your Order"
+            android:textStyle="bold"
+            android:layout_below="@id/orderState"
+            android:textColor="#000"
+            android:textSize="18sp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:scrollbars="vertical"
+            android:isScrollContainer="false"
+            android:overScrollMode="never"
+            android:layout_height="match_parent"
+            android:layout_below="@id/yourOrder" />
+
+        <LinearLayout
+            android:id="@+id/itemTotalView"
+            android:layout_below="@id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+            <TextView
+                android:id="@+id/itemTotalTitle"
+                android:layout_marginTop="25dp"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/josefinsans"
+                android:text="Item Total"
+                android:textColor="#000"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/itemTotal"
+                android:layout_marginTop="25dp"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/josefinsans"
+                android:textColor="#000"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/deliveryChargesView"
+            android:layout_below="@id/itemTotalView"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+            <TextView
+                android:id="@+id/deliveryChargesTitle"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/josefinsans"
+                android:text="Delivery Charges"
+                android:textColor="#000"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/deliveryCharges"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/josefinsans"
+                android:textColor="#000"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/seprator1"
+            android:layout_below="@id/deliveryChargesView"
+            android:layout_marginTop="10dp"
+            android:background="#D6DBDF"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:id="@+id/totalAmountView"
+            android:layout_below="@id/seprator1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+            <TextView
+                android:id="@+id/totalTitle"
+                android:layout_marginTop="15dp"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/josefinsans"
+                android:text="Total"
+                android:textColor="#000"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/totalAmount"
+                android:layout_marginTop="15dp"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/josefinsans"
+                android:textColor="#000"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/seprator2"
+            android:layout_below="@id/totalAmountView"
+            android:layout_marginTop="10dp"
+            android:background="#D6DBDF"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/orderDetails"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Order Details"
+            android:textStyle="bold"
+            android:layout_below="@id/seprator2"
+            android:textColor="#000"
+            android:textSize="18sp"/>
+
+
+        <TextView
+            android:id="@+id/orderNumberTitle"
+            android:layout_width="match_parent"
+            android:layout_marginTop="25dp"
+            android:layout_below="@id/orderDetails"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Order Number"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/orderNumber"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/orderNumberTitle"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="NA"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+
+        <TextView
+            android:id="@+id/DateTitle"
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/orderNumber"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Date"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/Date"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/DateTitle"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="NA"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+
+        <TextView
+            android:id="@+id/dAddressTitle"
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/Date"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Deliver To"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/dAddressValue"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/dAddressTitle"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Behind go gas."
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/dAddressValue"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Phone Number"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/phoneNumberValue"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/phoneNumber"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="7219309093"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
+        <View
+            android:id="@+id/seprator3"
+            android:layout_below="@id/phoneNumberValue"
+            android:layout_marginTop="15dp"
+            android:background="#D6DBDF"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/placeOrderBtn"
+            android:layout_marginTop="25dp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:layout_below="@id/seprator3"
+            android:background="@drawable/round_btn"
+            android:textColor="#fff"
+            android:textSize="16sp"/>
+</RelativeLayout>
+</ScrollView>
