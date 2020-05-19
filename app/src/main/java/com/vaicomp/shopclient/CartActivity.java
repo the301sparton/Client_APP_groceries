@@ -41,6 +41,7 @@ public class CartActivity extends AppCompatActivity {
     FirebaseFirestore fdb;
     OrderModal omGlobal;
     Button placeOrderBtn;
+    String order_id;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -49,7 +50,8 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.layout_cart);
         setTitle("Order Summary");
 
-        final String order_id = getIntent().getStringExtra("ORDER_ID");
+
+        order_id = getIntent().getStringExtra("ORDER_ID");
 
         fdb = FirebaseFirestore.getInstance();
         placeOrderBtn = findViewById(R.id.placeOrderBtn);
@@ -135,7 +137,7 @@ public class CartActivity extends AppCompatActivity {
                         }
 
                         else if(omGlobal.getState() <= 2){
-                            fdb.collection("orders").document(omGlobal.getOrderId())
+                            fdb.collection("orders").document(order_id)
                                     .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -155,16 +157,17 @@ public class CartActivity extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void initViews(String order_id) {
-        if (!order_id.equals("NA")) {
+    private void initViews(final String order_idT) {
+        if (!order_idT.equals("NA")) {
             db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
             final List<CartItem> categoryFilterList = new ArrayList<>();
-            fdb.collection("orders").document(order_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            fdb.collection("orders").document(order_idT).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     OrderModal orderModal = documentSnapshot.toObject(OrderModal.class);
                     omGlobal = orderModal;
+                    order_id = documentSnapshot.getId();
                     RecyclerView categoryList = findViewById(R.id.list);
                     RecyclerView.LayoutManager mLayoutManager = new CustomGridLayoutManager(getApplicationContext());
                     categoryList.setLayoutManager(mLayoutManager);
