@@ -194,7 +194,7 @@
             android:layout_below="@id/orderDetails"
             android:layout_height="wrap_content"
             android:fontFamily="@font/josefinsans"
-            android:text="Order Number"
+            android:text="Order ID"
             android:textColor="#000"
             android:textSize="14sp"/>
         <TextView
