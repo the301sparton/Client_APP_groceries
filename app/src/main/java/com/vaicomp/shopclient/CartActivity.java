@@ -38,6 +38,9 @@ public class CartActivity extends AppCompatActivity {
     double deliveryCharge;
     CartAdapter adapter;
     AppDataBase db;
+    FirebaseFirestore fdb;
+    OrderModal omGlobal;
+    Button placeOrderBtn;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -47,46 +50,18 @@ public class CartActivity extends AppCompatActivity {
         setTitle("Order Summary");
 
         final String order_id = getIntent().getStringExtra("ORDER_ID");
-        if (order_id.equals("NA")) {
 
-            db = Room.databaseBuilder(getApplicationContext(),
-                    AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-            List<CartItem> categoryFilterList = new ArrayList<>();
-            try {
-                categoryFilterList = new AsyncTask<Void, Void, List<CartItem>>() {
-                    @Override
-                    protected List<CartItem> doInBackground(Void... voids) {
-                        return db.cartItemDao().getAll();
-                    }
-                }.execute().get();
+        fdb = FirebaseFirestore.getInstance();
+        placeOrderBtn = findViewById(R.id.placeOrderBtn);
 
-                RecyclerView categoryList = findViewById(R.id.list);
-                RecyclerView.LayoutManager mLayoutManager = new CustomGridLayoutManager(getApplicationContext());
-                categoryList.setLayoutManager(mLayoutManager);
-                categoryList.setItemAnimator(new DefaultItemAnimator());
+        initViews(order_id);
 
-                adapter = new CartAdapter(categoryFilterList, CartActivity.this);
-                categoryList.setAdapter(adapter);
-
-                for(CartItem item : categoryFilterList){
-                    amount += item.getAmount();
-                }
-                TextView totalAmount = findViewById(R.id.itemTotal);
-                totalAmount.setText(String.valueOf(amount));
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            TextView orderState = findViewById(R.id.orderState);
-            orderState.setText(R.string.orderInCart);
-        }
-
-        final FirebaseFirestore fdb = FirebaseFirestore.getInstance();
         fdb.collection("shopDetails").document("/d1ajtkwauTOe8z27xdH8").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 TextView tv = findViewById(R.id.shopName);
-                tv.setText(String.valueOf(documentSnapshot.get("shopName")));
+                final String shopName = String.valueOf(documentSnapshot.get("shopName"));
+                tv.setText(shopName);
 
                 tv = findViewById(R.id.shopAddress);
                 tv.setText(String.valueOf(documentSnapshot.get("address")));
@@ -105,15 +80,15 @@ public class CartActivity extends AppCompatActivity {
                 tv = findViewById(R.id.totalAmount);
                 tv.setText(String.valueOf(amount + deliveryCharge));
 
-                Button placeOrderBtn = findViewById(R.id.placeOrderBtn);
-                placeOrderBtn.setVisibility(View.VISIBLE);
 
-                if(order_id.equals("NA")){
-                    placeOrderBtn.setText(R.string.placeOrder);
-                    placeOrderBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final Context context = getApplicationContext();
+
+
+               placeOrderBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Context context = getApplicationContext();
+                        if(order_id.equals("NA")){
+
                             final OrderModal orderModal = new OrderModal();
                             orderModal.setUid(preferenceManager.getUID(context));
                             orderModal.setShopId("d1ajtkwauTOe8z27xdH8");
@@ -151,28 +126,118 @@ public class CartActivity extends AppCompatActivity {
                                                     new SimpleDateFormat(pattern, new Locale("en", "IN"));
                                             tv.setText(simpleDateFormat.format(orderModal.getDate()));
 
-                                            Toasty.success(context, "Order Placed Successfully!",Toasty.LENGTH_SHORT).show();
+                                            Toasty.success(context, "Order Placed Successfully!", Toasty.LENGTH_SHORT).show();
+                                            initViews(orderModal.getOrderId());
                                         }
                                     }.execute();
                                 }
                             });
                         }
-                    });
-                }
+
+                        else if(omGlobal.getState() <= 2){
+                            fdb.collection("orders").document(omGlobal.getOrderId())
+                                    .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toasty.success(context, "Order Canceled Successfully", Toasty.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
+                        }
+
+                    }
+                });
+
             }
+
+
         });
-
-
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private void initViews(String order_id) {
+        if (!order_id.equals("NA")) {
+            db = Room.databaseBuilder(getApplicationContext(),
+                    AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+            final List<CartItem> categoryFilterList = new ArrayList<>();
+            fdb.collection("orders").document(order_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    OrderModal orderModal = documentSnapshot.toObject(OrderModal.class);
+                    omGlobal = orderModal;
+                    RecyclerView categoryList = findViewById(R.id.list);
+                    RecyclerView.LayoutManager mLayoutManager = new CustomGridLayoutManager(getApplicationContext());
+                    categoryList.setLayoutManager(mLayoutManager);
+                    categoryList.setItemAnimator(new DefaultItemAnimator());
 
-    public class CustomGridLayoutManager extends LinearLayoutManager {
+                    adapter = new CartAdapter(orderModal.getItemList(), orderModal.getState(), CartActivity.this);
+                    categoryList.setAdapter(adapter);
+
+                    for (CartItem item : categoryFilterList) {
+                        amount += item.getAmount();
+                    }
+                    TextView tv = findViewById(R.id.itemTotal);
+                    tv.setText(String.valueOf(amount));
+
+                    tv = findViewById(R.id.orderState);
+                    if (orderModal.getState() == 1) {
+                        placeOrderBtn.setText("Cancel Order");
+                        tv.setText(getString(R.string.orderState1));
+                    } else if (orderModal.getState() == 2) {
+                        placeOrderBtn.setText("Cancel Order");
+                        tv.setText(getString(R.string.orderState2));
+                    } else if (orderModal.getState() == 3) {
+                        placeOrderBtn.setText("Order WIll Arrive Shortly");
+                        tv.setText(getString(R.string.orderState3));
+                    } else if (orderModal.getState() == 4) {
+                        placeOrderBtn.setText("Order WIll Arrive Shortly");
+                        tv.setText(getString(R.string.orderState4));
+                    }
+
+                }
+            });
+        } else {
+            db = Room.databaseBuilder(getApplicationContext(),
+                    AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+            List<CartItem> categoryFilterList = new ArrayList<>();
+            try {
+                categoryFilterList = new AsyncTask<Void, Void, List<CartItem>>() {
+                    @Override
+                    protected List<CartItem> doInBackground(Void... voids) {
+                        return db.cartItemDao().getAll();
+                    }
+                }.execute().get();
+
+                RecyclerView categoryList = findViewById(R.id.list);
+                RecyclerView.LayoutManager mLayoutManager = new CustomGridLayoutManager(getApplicationContext());
+                categoryList.setLayoutManager(mLayoutManager);
+                categoryList.setItemAnimator(new DefaultItemAnimator());
+
+                adapter = new CartAdapter(categoryFilterList, 0, CartActivity.this);
+                categoryList.setAdapter(adapter);
+
+                for (CartItem item : categoryFilterList) {
+                    amount += item.getAmount();
+                }
+                TextView totalAmount = findViewById(R.id.itemTotal);
+                totalAmount.setText(String.valueOf(amount));
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            placeOrderBtn.setText(R.string.placeOrder);
+            TextView orderState = findViewById(R.id.orderState);
+            orderState.setText(R.string.orderInCart);
+        }
+    }
+
+    public static class CustomGridLayoutManager extends LinearLayoutManager {
         public CustomGridLayoutManager(Context context) {
             super(context);
         }
+
         @Override
         public boolean canScrollVertically() {
-             return false;
+            return false;
         }
     }
 }

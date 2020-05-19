@@ -23,6 +23,7 @@ import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CartItem> cartItems;
+    private int type;
     private Activity context;
 
     static class CartViewHolder extends RecyclerView.ViewHolder {
@@ -40,9 +41,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
 
-    public CartAdapter(List<CartItem> moviesList, Activity context) {
+    public CartAdapter(List<CartItem> moviesList, int type, Activity context) {
         this.cartItems = moviesList;
         this.context = context;
+        this.type = type;
     }
 
     @NonNull
@@ -67,32 +69,37 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 //                .centerCrop()
 //                .into(holder.itemImage);
 
-        holder.delteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final CartItem item = cartItems.get(position);
-                final AppDataBase db = Room.databaseBuilder(context,
-                        AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        db.cartItemDao().delete(item);
-                        cartItems.clear();
-                        cartItems.addAll(db.cartItemDao().getAll());
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-                        notifyDataSetChanged();
-                        if(cartItems.size() == 0){
-                            context.finish();
+        if(type == 0) {
+            holder.delteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final CartItem item = cartItems.get(position);
+                    final AppDataBase db = Room.databaseBuilder(context,
+                            AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            db.cartItemDao().delete(item);
+                            cartItems.clear();
+                            cartItems.addAll(db.cartItemDao().getAll());
+                            return null;
                         }
-                    }
-                }.execute();
-            }
-        });
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            super.onPostExecute(aVoid);
+                            notifyDataSetChanged();
+                            if (cartItems.size() == 0) {
+                                context.finish();
+                            }
+                        }
+                    }.execute();
+                }
+            });
+        }
+        else{
+            holder.delteBtn.setVisibility(View.GONE);
+        }
     }
 
     public List<CartItem> getAdapterData(){
