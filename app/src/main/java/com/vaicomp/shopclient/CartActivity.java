@@ -56,7 +56,6 @@ public class CartActivity extends AppCompatActivity {
         fdb = FirebaseFirestore.getInstance();
         placeOrderBtn = findViewById(R.id.placeOrderBtn);
 
-        initViews(order_id);
 
         fdb.collection("shopDetails").document("/d1ajtkwauTOe8z27xdH8").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -79,13 +78,10 @@ public class CartActivity extends AppCompatActivity {
                 deliveryCharge = Double.parseDouble(String.valueOf(documentSnapshot.get("deliveryCharge")));
                 tv.setText(String.valueOf(deliveryCharge));
 
-                tv = findViewById(R.id.totalAmount);
-                tv.setText(String.valueOf(amount + deliveryCharge));
+                initViews(order_id);
 
 
-
-
-               placeOrderBtn.setOnClickListener(new View.OnClickListener() {
+                placeOrderBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         placeOrderBtn.setEnabled(false);
@@ -164,13 +160,13 @@ public class CartActivity extends AppCompatActivity {
         if (!order_idT.equals("NA")) {
             db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-            final List<CartItem> categoryFilterList = new ArrayList<>();
             fdb.collection("orders").document(order_idT).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     OrderModal orderModal = documentSnapshot.toObject(OrderModal.class);
                     omGlobal = orderModal;
                     order_id = documentSnapshot.getId();
+
                     RecyclerView categoryList = findViewById(R.id.list);
                     RecyclerView.LayoutManager mLayoutManager = new CustomGridLayoutManager(getApplicationContext());
                     categoryList.setLayoutManager(mLayoutManager);
@@ -179,11 +175,24 @@ public class CartActivity extends AppCompatActivity {
                     adapter = new CartAdapter(orderModal.getItemList(), orderModal.getState(), CartActivity.this);
                     categoryList.setAdapter(adapter);
 
-                    for (CartItem item : categoryFilterList) {
-                        amount += item.getAmount();
-                    }
+
                     TextView tv = findViewById(R.id.itemTotal);
-                    tv.setText(String.valueOf(amount));
+                    tv.setText(String.valueOf(orderModal));
+
+                    tv = findViewById(R.id.totalAmount);
+                    tv.setText(String.valueOf(orderModal.getItemTotal() + orderModal.getDeliveryCost()));
+
+                    tv = findViewById(R.id.itemTotal);
+                    tv.setText(String.valueOf(orderModal.getItemTotal()));
+
+                    tv = findViewById(R.id.orderNumber);
+                    tv.setText(order_id);
+
+                    tv = findViewById(R.id.Date);
+                    String pattern = "MMMM dd, yyyy hh:mm a";
+                    SimpleDateFormat simpleDateFormat =
+                            new SimpleDateFormat(pattern, new Locale("en", "IN"));
+                    tv.setText(simpleDateFormat.format(orderModal.getDate()));
 
                     tv = findViewById(R.id.orderState);
                     if (orderModal.getState() == 1) {
@@ -193,10 +202,10 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setText("Cancel Order");
                         tv.setText(getString(R.string.orderState2));
                     } else if (orderModal.getState() == 3) {
-                        placeOrderBtn.setText("Order WIll Arrive Shortly");
+                        placeOrderBtn.setText("Order Will Arrive Shortly");
                         tv.setText(getString(R.string.orderState3));
                     } else if (orderModal.getState() == 4) {
-                        placeOrderBtn.setText("Order WIll Arrive Shortly");
+                        placeOrderBtn.setText("Order Was Delivered.");
                         tv.setText(getString(R.string.orderState4));
                     }
 
@@ -225,8 +234,13 @@ public class CartActivity extends AppCompatActivity {
                 for (CartItem item : categoryFilterList) {
                     amount += item.getAmount();
                 }
-                TextView totalAmount = findViewById(R.id.itemTotal);
-                totalAmount.setText(String.valueOf(amount));
+
+                TextView tv = findViewById(R.id.itemTotal);
+                tv.setText(String.valueOf(amount));
+
+                tv = findViewById(R.id.totalAmount);
+                tv.setText(String.valueOf(amount + deliveryCharge));
+
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }

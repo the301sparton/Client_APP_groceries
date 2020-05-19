@@ -45,7 +45,7 @@
         android:text="ITEMS"
         android:textSize="14sp"/>
     <TextView
-        android:id="@+id/itemsValue"
+        android:id="@+id/itemsCount"
         android:layout_marginTop="5dp"
         android:layout_below="@id/itemsTitle"
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
     <TextView
         android:id="@+id/orderedOnTitle"
         android:layout_marginTop="15dp"
-        android:layout_below="@id/itemsValue"
+        android:layout_below="@id/itemsCount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/josefinsans"
