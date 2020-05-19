@@ -6,4 +6,5 @@
     <string name="title_notifications">Notifications</string>
     <string name="orderInCart">Order is in cart.</string>
     <string name="placeOrder">Place Order</string>
+    <string name="order_not_placed">NA (Available when order is placed)</string>
 </resources>

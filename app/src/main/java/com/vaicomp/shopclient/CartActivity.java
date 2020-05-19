@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class CartActivity extends AppCompatActivity {
+
+    double amount = 0;
+
     @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,12 @@ public class CartActivity extends AppCompatActivity {
                 categoryList.setItemAnimator(new DefaultItemAnimator());
                 CartAdapter adapter = new CartAdapter(categoryFilterList, CartActivity.this);
                 categoryList.setAdapter(adapter);
+
+                for(CartItem item : categoryFilterList){
+                    amount += item.getAmount();
+                }
+                TextView totalAmount = findViewById(R.id.itemTotal);
+                totalAmount.setText(String.valueOf(amount));
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -76,11 +85,24 @@ public class CartActivity extends AppCompatActivity {
                 tv = findViewById(R.id.phoneNumberValue);
                 tv.setText(preferenceManager.getPhoneNumber(getApplicationContext()));
 
+                tv = findViewById(R.id.deliveryCharges);
+                double deliveryCharge = Double.parseDouble(String.valueOf(documentSnapshot.get("deliveryCharge")));
+                tv.setText(String.valueOf(deliveryCharge));
+
+                tv = findViewById(R.id.totalAmount);
+                tv.setText(String.valueOf(amount + deliveryCharge));
+
                 Button placeOrderBtn = findViewById(R.id.placeOrderBtn);
                 placeOrderBtn.setVisibility(View.VISIBLE);
 
                 if(order_id.equals("NA")){
                     placeOrderBtn.setText(R.string.placeOrder);
+                    placeOrderBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
                 }
             }
         });
@@ -95,8 +117,7 @@ public class CartActivity extends AppCompatActivity {
         }
         @Override
         public boolean canScrollVertically() {
-            //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
-            return false;
+             return false;
         }
     }
 }
