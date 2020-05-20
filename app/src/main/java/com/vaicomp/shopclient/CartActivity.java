@@ -26,6 +26,7 @@ import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
 import com.vaicomp.shopclient.db.OrderModal;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -203,13 +204,11 @@ public class CartActivity extends AppCompatActivity {
 
 
                     TextView tv = findViewById(R.id.itemTotal);
-                    tv.setText(String.valueOf(orderModal));
+                    tv.setText(MessageFormat.format("₹ {0}", orderModal.getItemTotal()));
 
                     tv = findViewById(R.id.totalAmount);
-                    tv.setText(String.valueOf(orderModal.getItemTotal() + orderModal.getDeliveryCost()));
+                    tv.setText(String.format("₹ %s", orderModal.getItemTotal() + orderModal.getDeliveryCost()));
 
-                    tv = findViewById(R.id.itemTotal);
-                    tv.setText(String.valueOf(orderModal.getItemTotal()));
 
                     tv = findViewById(R.id.orderNumber);
                     tv.setText(order_id);
@@ -264,7 +263,7 @@ public class CartActivity extends AppCompatActivity {
                 }
 
                 TextView tv = findViewById(R.id.itemTotal);
-                tv.setText(String.valueOf(amount));
+                tv.setText(MessageFormat.format("₹ {0}", amount));
 
                 tv = findViewById(R.id.totalAmount);
                 tv.setText(String.valueOf(amount + deliveryCharge));

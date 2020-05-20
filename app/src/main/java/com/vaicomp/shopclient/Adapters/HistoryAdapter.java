@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.OrderModal;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
     private List<OrderModal> cartItems;
@@ -56,7 +58,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         holder.uname.setText(item.getUname());
         holder.address.setText(item.getDeliveryAddress());
         holder.itemsCount.setText(String.valueOf(item.getItemList().size()));
-        holder.orderedOn.setText(item.getDeliveryAddress());
+
+        String pattern = "MMMM dd, yyyy hh:mm a";
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat(pattern, new Locale("en", "IN"));
+
+        holder.orderedOn.setText(simpleDateFormat.format(item.getDate()));
         holder.amount.setText(String.valueOf(item.getGrandTotal()));
 
         if(item.getState() == 1){

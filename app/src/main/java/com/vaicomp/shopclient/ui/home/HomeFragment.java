@@ -41,7 +41,6 @@ public class HomeFragment extends Fragment {
     private List<ShopItem> list, searchList, fireBaseList;
     private ItemAdapter adapter;
     private TextInputEditText searchBar;
-    private ImageView filterBtn;
     private Button clear;
 
     @SuppressLint("StaticFieldLeak")
@@ -53,7 +52,7 @@ public class HomeFragment extends Fragment {
         listView = root.findViewById(R.id.list);
         searchBar = root.findViewById(R.id.searchBar);
         clear = root.findViewById(R.id.calc_clear_txt_Prise);
-        filterBtn = root.findViewById(R.id.filterBtn);
+        ImageView filterBtn = root.findViewById(R.id.filterBtn);
 
         clear.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -17,6 +17,7 @@ import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
@@ -26,7 +27,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     static class CartViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, rateQ, amount;
-        ImageView itemImage, delteBtn;
+        ImageView delteBtn;
 
         CartViewHolder(View view) {
             super(view);
@@ -58,8 +59,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(CartViewHolder holder, final int position) {
         CartItem item = cartItems.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.rateQ.setText(item.getQuantity() + " X ₹"+item.getRate());
-        holder.amount.setText("₹"+item.getRate()*item.getQuantity());
+        holder.rateQ.setText(MessageFormat.format("{0} X ₹ {1}", item.getQuantity(), item.getRate()));
+        holder.amount.setText(String.format("₹ %s", item.getRate() * item.getQuantity()));
 
 
         if(type == 0) {
@@ -84,6 +85,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             notifyDataSetChanged();
                             if (cartItems.size() == 0) {
                                 context.finish();
+                            }
+                            else{
+                                double amount = 0;
+                                for(CartItem orderModal : cartItems){
+                                    amount += orderModal.getAmount();
+                                }
+                                TextView tv = context.findViewById(R.id.itemTotal);
+                                tv.setText(MessageFormat.format("₹ {0}", amount));
+
+                                tv = context.findViewById(R.id.totalAmount);
+                                TextView tvD = context.findViewById(R.id.deliveryCharges);
+                                tv.setText(String.format("₹ %s", amount + Double.parseDouble(String.valueOf(tvD.getText()))));
                             }
                         }
                     }.execute();
