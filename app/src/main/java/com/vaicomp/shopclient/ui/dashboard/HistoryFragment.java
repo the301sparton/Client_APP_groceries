@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -33,9 +34,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class HistoryFragment extends Fragment {
-    FirebaseFirestore fdb;
-    RecyclerView listView;
-    List<OrderModal> list;
+
+    private RecyclerView listView;
+    private List<OrderModal> list;
+    private LinearLayout loader;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +45,12 @@ public class HistoryFragment extends Fragment {
         list = new ArrayList<>();
         View root = inflater.inflate(R.layout.fragment_history, container, false);
         listView = root.findViewById(R.id.list);
+
+        loader = root.findViewById(R.id.loader);
+        loader.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+
+
         listView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
@@ -84,7 +92,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fdb = FirebaseFirestore.getInstance();
+        FirebaseFirestore fdb = FirebaseFirestore.getInstance();
         String uid = preferenceManager.getUID(getContext());
         fdb.collection("orders").whereEqualTo("uid", uid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -114,7 +122,8 @@ public class HistoryFragment extends Fragment {
                     listView.setAdapter(adapter);
                 }
 
-
+                listView.setVisibility(View.VISIBLE);
+                loader.setVisibility(View.GONE);
             }
         });
     }
