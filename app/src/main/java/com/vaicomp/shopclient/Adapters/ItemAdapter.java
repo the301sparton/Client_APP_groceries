@@ -2,9 +2,7 @@ package com.vaicomp.shopclient.Adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> {
     private List<ShopItem> itemList;
+    private List<CartItem> cartItemList;
     private Activity ctx;
 
 
@@ -105,7 +104,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
 
                 ShopItem shopItem = itemList.get(position);
 
-                List<CartItem> cartItemList = new ArrayList<>();
+
                 final CartItem cartItem = new CartItem();
 
                 cartItem.setItemId(shopItem.getItemId());
@@ -129,23 +128,30 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
                                 return db.cartItemDao().getAll();
                             }
                         }.execute().get();
+                        updateCartDetails(cartItemList, ctx);
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
 
                 }
                 else if(cartItem.getQuantity() == 0){
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            db.cartItemDao().delete(cartItem);
-                            return null;
-                        }
-                    }.execute();
+                    try {
+                        cartItemList = new AsyncTask<Void, Void, List<CartItem>>() {
+                            @Override
+                            protected List<CartItem> doInBackground(Void... voids) {
+                                db.cartItemDao().delete(cartItem);
+                                return db.cartItemDao().getAll();
+                            }
+                        }.execute().get();
+                        holder.amount.setText("₹ "+cartItem.getAmount());
+                        updateCartDetails(cartItemList, ctx);
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
-                holder.amount.setText("₹"+cartItem.getAmount());
-                updateCartDetails(cartItemList, ctx);
+
             }
         });
     }
@@ -160,19 +166,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
         totalamount = toolbarTop.findViewById(R.id.totalAmount);
 
         for(CartItem item : list){
-            if(item.getQuantity() > 0) {
+            if(item.getQuantity() != 0) {
                 itemCount++;
                 amount += item.getAmount();
             }
         }
-        if(itemCount > 1){
-            totalItems.setText(itemCount + " Items");
-        }
-        else{
-            totalItems.setText(itemCount + " Item");
-        }
 
-        totalamount.setText("₹"+amount);
+        totalItems.setText(itemCount + " Items");
+        totalamount.setText("₹ "+amount);
     }
 
 
