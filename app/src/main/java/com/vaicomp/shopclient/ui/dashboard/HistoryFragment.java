@@ -1,6 +1,5 @@
 package com.vaicomp.shopclient.ui.dashboard;
 
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -20,10 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.vaicomp.shopclient.Adapters.ClickListener;
 import com.vaicomp.shopclient.Adapters.HistoryAdapter;
-import com.vaicomp.shopclient.Adapters.RecyclerTouchListener;
-import com.vaicomp.shopclient.CartActivity;
 import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.OrderModal;
 import com.vaicomp.shopclient.preferenceManager;
@@ -73,19 +69,7 @@ public class HistoryFragment extends Fragment {
             }
         });
 
-        listView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
-                listView, new ClickListener() {
-            @Override
-            public void onClick(View view, final int position) {
-                startActivity(new Intent(getActivity(), CartActivity.class)
-                        .putExtra("ORDER_ID", list.get(position).getOrderId()));
-            }
 
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
         return root;
     }
 

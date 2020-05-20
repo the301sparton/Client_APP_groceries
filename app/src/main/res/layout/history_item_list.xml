@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemParent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/curve_white_no_border"
@@ -115,7 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/seprator1"
-        android:layout_marginTop="10dp"
+        android:paddingTop="10dp"
         android:orientation="horizontal"
         android:weightSum="10">
 
@@ -133,6 +134,7 @@
             android:textSize="14sp" />
 
         <LinearLayout
+            android:id="@+id/repeatOrder"
             android:layout_width="0dp"
             android:layout_weight="4"
             android:orientation="horizontal"
@@ -148,7 +150,6 @@
                 android:src="@drawable/ic_repeat" />
 
             <TextView
-                android:id="@+id/repeatOrder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"

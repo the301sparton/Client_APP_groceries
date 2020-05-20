@@ -24,6 +24,7 @@ import com.vaicomp.shopclient.Adapters.CartAdapter;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
 import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
+import com.vaicomp.shopclient.db.CategoryFilter;
 import com.vaicomp.shopclient.ui.home.HomeFragment;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 import es.dmoral.toasty.Toasty;
 
 public class HomeActivity extends AppCompatActivity {
+    AppDataBase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,8 @@ public class HomeActivity extends AppCompatActivity {
             @SuppressLint("StaticFieldLeak")
             @Override
             public void onClick(View v) {
-                final AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+
+                db = Room.databaseBuilder(getApplicationContext(),
                         AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
                 List<CartItem> categoryFilterList = new ArrayList<>();
                 try {
@@ -124,4 +127,25 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<CartItem> cartItems;
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+
+        try {
+            cartItems = new AsyncTask<Void, Void, List<CartItem>>() {
+                @Override
+                protected List<CartItem> doInBackground(Void... voids) {
+                    return db.cartItemDao().getAll();
+                }
+            }.execute().get();
+            ItemAdapter.updateCartDetails(cartItems,HomeActivity.this);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

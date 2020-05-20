@@ -147,7 +147,7 @@ public class CartActivity extends AppCompatActivity {
                             });
                         }
 
-                        else if(omGlobal.getState() == 2){
+                        else if(omGlobal.getState() == 2 || omGlobal.getState() == 1){
                             fdb.collection("orders").document(order_id)
                                     .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -278,6 +278,7 @@ public class CartActivity extends AppCompatActivity {
             loader.setVisibility(View.GONE);
         }
     }
+
 
     public static class CustomGridLayoutManager extends LinearLayoutManager {
         public CustomGridLayoutManager(Context context) {
