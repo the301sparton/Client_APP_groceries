@@ -6,6 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,8 +29,10 @@ import com.vaicomp.shopclient.db.OrderModal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import es.dmoral.toasty.Toasty;
@@ -42,6 +47,8 @@ public class CartActivity extends AppCompatActivity {
     OrderModal omGlobal;
     Button placeOrderBtn;
     String order_id;
+    ScrollView baseView;
+    LinearLayout loader;
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -50,6 +57,11 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.layout_cart);
         setTitle("Order Summary");
 
+
+        baseView = findViewById(R.id.baseView);
+        loader = findViewById(R.id.loader);
+        loader.setVisibility(View.VISIBLE);
+        baseView.setVisibility(View.GONE);
 
         order_id = getIntent().getStringExtra("ORDER_ID");
 
@@ -125,16 +137,16 @@ public class CartActivity extends AppCompatActivity {
                                                     new SimpleDateFormat(pattern, new Locale("en", "IN"));
                                             tv.setText(simpleDateFormat.format(orderModal.getDate()));
 
-                                            placeOrderBtn.setEnabled(true);
                                             Toasty.success(context, "Order Placed Successfully!", Toasty.LENGTH_SHORT).show();
                                             initViews(orderModal.getOrderId());
+                                            placeOrderBtn.setEnabled(true);
                                         }
                                     }.execute();
                                 }
                             });
                         }
 
-                        else if(omGlobal.getState() <= 2){
+                        else if(omGlobal.getState() == 2){
                             fdb.collection("orders").document(order_id)
                                     .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -142,6 +154,20 @@ public class CartActivity extends AppCompatActivity {
                                     placeOrderBtn.setEnabled(true);
                                     Toasty.success(context, "Order Canceled Successfully", Toasty.LENGTH_SHORT).show();
                                     finish();
+                                }
+                            });
+                        }
+
+                        else if(omGlobal.getState() == 3){
+
+                            fdb.collection("orders").document(order_id).update("state",4).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toasty.success(getApplicationContext(), "Order Received",Toasty.LENGTH_SHORT).show();
+                                    placeOrderBtn.setText(getString(R.string.orderState4));
+                                    placeOrderBtn.setEnabled(false);
+                                    TextView tv = findViewById(R.id.orderState);
+                                    tv.setText(getString(R.string.orderState4));
                                 }
                             });
                         }
@@ -157,7 +183,7 @@ public class CartActivity extends AppCompatActivity {
 
     @SuppressLint("StaticFieldLeak")
     private void initViews(final String order_idT) {
-        if (!order_idT.equals("NA")) {
+         if (!order_idT.equals("NA")) {
             db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
             fdb.collection("orders").document(order_idT).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -202,13 +228,15 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setText("Cancel Order");
                         tv.setText(getString(R.string.orderState2));
                     } else if (orderModal.getState() == 3) {
-                        placeOrderBtn.setText("Order Will Arrive Shortly");
+                        placeOrderBtn.setText("Confirm Delivery");
                         tv.setText(getString(R.string.orderState3));
                     } else if (orderModal.getState() == 4) {
-                        placeOrderBtn.setText("Order Was Delivered.");
+                        placeOrderBtn.setText("Order Delivered.");
                         tv.setText(getString(R.string.orderState4));
                     }
 
+                    baseView.setVisibility(View.VISIBLE);
+                    loader.setVisibility(View.GONE);
                 }
             });
         } else {
@@ -247,6 +275,8 @@ public class CartActivity extends AppCompatActivity {
             placeOrderBtn.setText(R.string.placeOrder);
             TextView orderState = findViewById(R.id.orderState);
             orderState.setText(R.string.orderInCart);
+            baseView.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.GONE);
         }
     }
 

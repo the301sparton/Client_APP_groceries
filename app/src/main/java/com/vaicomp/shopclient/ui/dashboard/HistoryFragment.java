@@ -43,6 +43,27 @@ public class HistoryFragment extends Fragment {
         list = new ArrayList<>();
         View root = inflater.inflate(R.layout.fragment_history, container, false);
         listView = root.findViewById(R.id.list);
+        listView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.onDraw(c, parent, state);
+            }
+
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.left = 5;
+                outRect.right = 5;
+                outRect.bottom = 40;
+
+                // Add top margin only for the first item to avoid double space between items
+                if (parent.getChildLayoutPosition(view) == 0) {
+                    outRect.top = 5;
+                } else {
+                    outRect.top = 0;
+                }
+            }
+        });
 
         listView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
                 listView, new ClickListener() {
@@ -88,27 +109,7 @@ public class HistoryFragment extends Fragment {
                     HistoryAdapter adapter = new HistoryAdapter(list, getActivity());
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                     listView.setLayoutManager(mLayoutManager);
-                    listView.addItemDecoration(new RecyclerView.ItemDecoration() {
-                        @Override
-                        public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                            super.onDraw(c, parent, state);
-                        }
 
-                        @Override
-                        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                            super.getItemOffsets(outRect, view, parent, state);
-                            outRect.left = 5;
-                            outRect.right = 5;
-                            outRect.bottom = 40;
-
-                            // Add top margin only for the first item to avoid double space between items
-                            if (parent.getChildLayoutPosition(view) == 0) {
-                                outRect.top = 5;
-                            } else {
-                                outRect.top = 0;
-                            }
-                        }
-                    });
                     listView.setItemAnimator(new DefaultItemAnimator());
                     listView.setAdapter(adapter);
                 }
