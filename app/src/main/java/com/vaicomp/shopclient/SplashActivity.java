@@ -58,6 +58,8 @@ public class SplashActivity extends AppCompatActivity {
 
             if (!preferenceManager.getIsLoggedIn(getApplicationContext())) {
                 SignInButton signInButton = findViewById(R.id.sign_in_button);
+                TextView loader = findViewById(R.id.loader);
+                loader.setVisibility(View.GONE);
                 signInButton.setVisibility(View.VISIBLE);
                 signInButton.setSize(SignInButton.SIZE_STANDARD);
 
@@ -80,6 +82,8 @@ public class SplashActivity extends AppCompatActivity {
             else{
                 SignInButton signInButton = findViewById(R.id.sign_in_button);
                 signInButton.setVisibility(View.GONE);
+                TextView loader = findViewById(R.id.loader);
+                loader.setVisibility(View.VISIBLE);
                 loadAllDataToLocalDB(SplashActivity.this);
             }
 
@@ -148,65 +152,78 @@ public class SplashActivity extends AppCompatActivity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("shopItemState").document("d1ajtkwauTOe8z27xdH8").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
-                if(list1.size() != 0){
-                    final AppDataBase local_db = Room.databaseBuilder(activity.getBaseContext(),
-                            AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            local_db.shopItemDao().nukeTable();
-                            local_db.categoryFilterDao().nukeTable();
-                            return null;
-                        }
-                    }.execute();
-
-                    final ShopItem[] itemList = new ShopItem[list1.size()];
-                    int itr = 0;
-                    for(DocumentSnapshot ds : list1) {
-                        ShopItem item = new ShopItem();
-
-                        item.setItemId(ds.getId());
-                        item.setItemName(String.valueOf(ds.get("itemName")));
-                        item.setCategory(String.valueOf(ds.get("category")));
-                        item.setImageUrl(String.valueOf(ds.get("photoUrl")));
-                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
-                        item.setAmount((double) 0);
-                        item.setQuantity(0);
-
-                        itemList[itr] = item;
-                        itr++;
-                    }
-
-                    db.collection("category").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                final String itemState = String.valueOf(documentSnapshot.get("itemState"));
+                if(!itemState.equals(preferenceManager.getItemState(activity)))
+                {
+                    db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
-                            if(list1.size() != 0) {
-                                final CategoryFilter[] categoryFilterList = new CategoryFilter[list1.size()];
-                                int itr = 0;
-                                for(DocumentSnapshot ds : list1){
-                                    categoryFilterList[itr] = new CategoryFilter(String.valueOf(ds.get("categoryName")),false);
-                                    itr++;
-                                }
+                            if(list1.size() != 0){
+                                final AppDataBase local_db = Room.databaseBuilder(activity.getBaseContext(),
+                                        AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+
                                 new AsyncTask<Void, Void, Void>() {
                                     @Override
                                     protected Void doInBackground(Void... voids) {
-                                        local_db.categoryFilterDao().insertAll(categoryFilterList);
-                                        local_db.shopItemDao().insertAll(itemList);
-                                        activity.startActivity(new Intent(activity, HomeActivity.class));
-                                        activity.finish();
+                                        local_db.shopItemDao().nukeTable();
+                                        local_db.categoryFilterDao().nukeTable();
                                         return null;
                                     }
                                 }.execute();
+
+                                final ShopItem[] itemList = new ShopItem[list1.size()];
+                                int itr = 0;
+                                for(DocumentSnapshot ds : list1) {
+                                    ShopItem item = new ShopItem();
+
+                                    item.setItemId(ds.getId());
+                                    item.setItemName(String.valueOf(ds.get("itemName")));
+                                    item.setCategory(String.valueOf(ds.get("category")));
+                                    item.setImageUrl(String.valueOf(ds.get("photoUrl")));
+                                    item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
+                                    item.setAmount((double) 0);
+                                    item.setQuantity(0);
+
+                                    itemList[itr] = item;
+                                    itr++;
+                                }
+
+                                db.collection("category").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                                        if(list1.size() != 0) {
+                                            final CategoryFilter[] categoryFilterList = new CategoryFilter[list1.size()];
+                                            int itr = 0;
+                                            for(DocumentSnapshot ds : list1){
+                                                categoryFilterList[itr] = new CategoryFilter(String.valueOf(ds.get("categoryName")),false);
+                                                itr++;
+                                            }
+                                            new AsyncTask<Void, Void, Void>() {
+                                                @Override
+                                                protected Void doInBackground(Void... voids) {
+                                                    local_db.categoryFilterDao().insertAll(categoryFilterList);
+                                                    local_db.shopItemDao().insertAll(itemList);
+                                                    activity.startActivity(new Intent(activity, HomeActivity.class));
+                                                    preferenceManager.setItemState(activity, itemState);
+                                                    activity.finish();
+                                                    return null;
+                                                }
+                                            }.execute();
+                                        }
+                                    }
+                                });
+
                             }
                         }
                     });
-
+                }
+                else{
+                    activity.startActivity(new Intent(activity, HomeActivity.class));
                 }
             }
         });

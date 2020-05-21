@@ -29,15 +29,27 @@ public class preferenceManager {
         return sharedPreferences.getString("UID","");
     }
 
-    static void setCategoryList(Context context, Set<String> categoryList){
+    static void setItemState(Context context, String itemState){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.edit().putStringSet("categoryList", categoryList).apply();
+        sharedPreferences.edit().putString("itemState", itemState).apply();
     }
 
-    static Set<String> getCategoryList(Context context){
+    public static String getItemState(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getStringSet("categoryList", new HashSet<String>());
+        return sharedPreferences.getString("itemState","");
     }
+
+
+    static void setCategoryState(Context context, String categoryState){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putString("categoryState", categoryState).apply();
+    }
+
+    public static String getCategoryState(Context context){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString("categoryState","");
+    }
+
 
     static void setDisplayName(Context context, String secret){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

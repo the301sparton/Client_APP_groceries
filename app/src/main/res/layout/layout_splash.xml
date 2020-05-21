@@ -34,16 +34,16 @@
     <RelativeLayout
         android:layout_below="@id/productName"
         android:layout_width="match_parent"
-        android:padding="30dp"
+        android:padding="15dp"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/top_img"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:src="@drawable/ic_sb_shop_graphic">
 
-        </androidx.appcompat.widget.AppCompatImageView>
+        </ImageView>
 
         <TextView
             android:id="@+id/introText"
@@ -77,13 +77,26 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:layout_above="@id/versionText"
+            android:id="@+id/loader"
+            android:layout_marginBottom="25dp"
+            android:text="Loading.."
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:gravity="center"
+            android:fontFamily="@font/josefinsans"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"/>
+
+        <TextView
             android:id="@+id/versionText"
             android:layout_above="@id/copyRight"
             android:layout_marginBottom="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/textColorDark"
             android:gravity="center"
             android:fontFamily="@font/josefinsansitalic"
             android:text="v1.0.0"/>
@@ -94,10 +107,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:fontFamily="@font/josefinsansregular"
-            android:layout_marginBottom="5dp"
             android:gravity="center"
             android:text="Copyright Vaikuntha Softpark\nAll rights reserved. "
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/textColorDark"
             android:textAllCaps="false"
             android:textSize="14sp" />
     </RelativeLayout>
