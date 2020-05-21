@@ -28,7 +28,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/top_img"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="140dp"
         android:src="@drawable/ic_profile">
 
     </androidx.appcompat.widget.AppCompatImageView>
@@ -86,6 +86,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/josefinsansregular"
                 android:hint="Phone Number"
+                android:maxLength="10"
                 android:inputType="phone" />
 
 
@@ -96,9 +97,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phoneNumber"
                 android:layout_marginTop="10dp"
+                android:maxLines="3"
                 android:fontFamily="@font/josefinsansregular"
                 android:hint="Address"
-                android:inputType="textPostalAddress" />
+                android:inputType="text" />
 
     <Button
         android:layout_alignParentBottom="true"

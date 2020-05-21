@@ -11,6 +11,14 @@
         android:background="@color/colorPrimary_a"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/profileView"
+            android:padding="8dp"
+            android:src="@drawable/ic_user"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
         <LinearLayout
             android:layout_alignParentBottom="true"
             android:id="@+id/viewCart"
@@ -19,6 +27,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:padding="8dp"
+            android:layout_marginStart="10dp"
             android:weightSum="10" >
 
             <LinearLayout

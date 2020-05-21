@@ -5,14 +5,17 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/settings"
-        android:title="Settings"
+        android:id="@+id/clearCart"
+        android:title="Empty Cart"/>
+    <item
+        android:id="@+id/aboutUs"
+        android:title="About Us"/>
 
-         />
+    <item
+        android:id="@+id/shareApp"
+        android:title="Share App"/>
+
     <item
         android:id="@+id/logOut"
-        android:title="Logout"
-         />
-
-
+        android:title="Logout"/>
 </menu>

@@ -224,6 +224,7 @@ public class SplashActivity extends AppCompatActivity {
                 }
                 else{
                     activity.startActivity(new Intent(activity, HomeActivity.class));
+                    activity.finish();
                 }
             }
         });

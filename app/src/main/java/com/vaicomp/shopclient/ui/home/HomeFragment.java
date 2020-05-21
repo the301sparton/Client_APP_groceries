@@ -3,7 +3,6 @@ package com.vaicomp.shopclient.ui.home;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -38,11 +38,22 @@ import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment {
 
+    private static HomeFragment me;
     private RecyclerView listView;
     private List<ShopItem> list, searchList, fireBaseList;
     private ItemAdapter adapter;
     private TextInputEditText searchBar;
     private Button clear;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        me = this;
+    }
+
+    public static HomeFragment getInstance(){
+        return me;
+    }
 
     @SuppressLint("StaticFieldLeak")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -113,7 +124,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         Log.i("onResume", "blah");
 
-        final AppDataBase db = Room.databaseBuilder(getActivity(),
+        final AppDataBase db = Room.databaseBuilder(requireActivity(),
                 AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
         try {
             fireBaseList = new AsyncTask<Void, Void, List<ShopItem>>() {
