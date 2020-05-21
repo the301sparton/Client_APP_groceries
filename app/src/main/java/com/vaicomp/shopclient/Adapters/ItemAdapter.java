@@ -149,7 +149,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
                     }
 
                 }
-
+                holder.amount.setText(String.valueOf(shopItem.getRate() * Integer.parseInt(holder.quantity.getNumber())));
 
             }
         });
