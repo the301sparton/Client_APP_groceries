@@ -77,41 +77,49 @@ public class ProfileDetailActivity extends AppCompatActivity {
         saveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //preferenceManager.setUID(context, account.getId());
-                preferenceManager.setDisplayName(context,displayName.getText().toString());
-                preferenceManager.setEmailId(context, emailId.getText().toString());
-                preferenceManager.setAddress(context, address.getText().toString());
-                preferenceManager.setPhoneNumber(context, phoneNum.getText().toString());
 
-                progress_horizontal.setVisibility(View.VISIBLE);
-                final Map<String, Object> user = new HashMap<>();
-                user.put("UID", preferenceManager.getUID(context));
-                user.put("displayName", displayName.getText().toString());
-                user.put("emailId", emailId.getText().toString());
-                user.put("phoneNumber", phoneNum.getText().toString());
-                user.put("address",address.getText().toString());
-                user.put("photoUrl", preferenceManager.getPhotoUrl(context));
+                if(!displayName.getText().toString().equals("") && !emailId.getText().toString().equals("")
+                && !phoneNum.getText().toString().equals("") && !address.getText().toString().equals("")){
+                    //preferenceManager.setUID(context, account.getId());
+                    preferenceManager.setDisplayName(context,displayName.getText().toString());
+                    preferenceManager.setEmailId(context, emailId.getText().toString());
+                    preferenceManager.setAddress(context, address.getText().toString());
+                    preferenceManager.setPhoneNumber(context, phoneNum.getText().toString());
 
-                if(toInsert){
-                    db.collection("users").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            preferenceManager.setIsLoggedIn(context, true);
-                            Toasty.success(getApplicationContext(), "Profile Details Saved!", Toasty.LENGTH_SHORT).show();
-                            SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
-                        }
-                    });
+                    progress_horizontal.setVisibility(View.VISIBLE);
+                    final Map<String, Object> user = new HashMap<>();
+                    user.put("UID", preferenceManager.getUID(context));
+                    user.put("displayName", displayName.getText().toString());
+                    user.put("emailId", emailId.getText().toString());
+                    user.put("phoneNumber", phoneNum.getText().toString());
+                    user.put("address",address.getText().toString());
+                    user.put("photoUrl", preferenceManager.getPhotoUrl(context));
+
+                    if(toInsert){
+                        db.collection("users").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                preferenceManager.setIsLoggedIn(context, true);
+                                Toasty.success(getApplicationContext(), "Profile Details Saved!", Toasty.LENGTH_SHORT).show();
+                                SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
+                            }
+                        });
+                    }
+                    else {
+                        db.collection("users").document(accountId).update(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                preferenceManager.setIsLoggedIn(context, true);
+                                Toasty.success(getApplicationContext(), "Profile Details Saved!", Toasty.LENGTH_SHORT).show();
+                                SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
+                            }
+                        });
+                    }
                 }
-                else {
-                    db.collection("users").document(accountId).update(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            preferenceManager.setIsLoggedIn(context, true);
-                            Toasty.success(getApplicationContext(), "Profile Details Saved!", Toasty.LENGTH_SHORT).show();
-                            SplashActivity.loadAllDataToLocalDB(ProfileDetailActivity.this);
-                        }
-                    });
+                else{
+                    Toasty.error(context, "Please Enter All Values.",Toasty.LENGTH_SHORT).show();
                 }
+
             }
         });
     }

@@ -7,9 +7,10 @@
     <item
         android:id="@+id/clearCart"
         android:title="Empty Cart"/>
-    <item
-        android:id="@+id/aboutUs"
-        android:title="About Us"/>
+
+<!--    <item-->
+<!--        android:id="@+id/aboutUs"-->
+<!--        android:title="About Us"/>-->
 
     <item
         android:id="@+id/shareApp"

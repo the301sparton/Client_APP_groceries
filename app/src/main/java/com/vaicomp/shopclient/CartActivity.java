@@ -2,10 +2,12 @@ package com.vaicomp.shopclient;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -50,6 +52,8 @@ public class CartActivity extends AppCompatActivity {
     String order_id;
     ScrollView baseView;
     LinearLayout loader;
+    ImageView editProfileBtn;
+
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -91,6 +95,8 @@ public class CartActivity extends AppCompatActivity {
                 deliveryCharge = Double.parseDouble(String.valueOf(documentSnapshot.get("deliveryCharge")));
                 tv.setText(String.valueOf(deliveryCharge));
 
+                editProfileBtn = findViewById(R.id.editProfile);
+
                 initViews(order_id);
 
 
@@ -100,6 +106,14 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setEnabled(false);
                         final Context context = getApplicationContext();
                         if(order_id.equals("NA")){
+
+
+                            editProfileBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    startActivity(new Intent(CartActivity.this, ProfileDetailActivity.class));
+                                }
+                            });
 
                             final OrderModal orderModal = new OrderModal();
                             orderModal.setUid(preferenceManager.getUID(context));
@@ -176,6 +190,8 @@ public class CartActivity extends AppCompatActivity {
                     }
                 });
 
+
+
             }
 
 
@@ -185,7 +201,8 @@ public class CartActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private void initViews(final String order_idT) {
          if (!order_idT.equals("NA")) {
-            db = Room.databaseBuilder(getApplicationContext(),
+             editProfileBtn.setVisibility(View.GONE);
+             db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
             fdb.collection("orders").document(order_idT).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
@@ -238,8 +255,10 @@ public class CartActivity extends AppCompatActivity {
                     loader.setVisibility(View.GONE);
                 }
             });
-        } else {
-            db = Room.databaseBuilder(getApplicationContext(),
+        }
+         else {
+             editProfileBtn.setVisibility(View.VISIBLE);
+             db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
             List<CartItem> categoryFilterList = new ArrayList<>();
             try {
