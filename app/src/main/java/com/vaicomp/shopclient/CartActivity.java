@@ -100,6 +100,7 @@ public class CartActivity extends AppCompatActivity {
                 initViews(order_id);
 
 
+
                 placeOrderBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -108,12 +109,7 @@ public class CartActivity extends AppCompatActivity {
                         if(order_id.equals("NA")){
 
 
-                            editProfileBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    startActivity(new Intent(CartActivity.this, ProfileDetailActivity.class));
-                                }
-                            });
+
 
                             final OrderModal orderModal = new OrderModal();
                             orderModal.setUid(preferenceManager.getUID(context));
@@ -257,7 +253,15 @@ public class CartActivity extends AppCompatActivity {
             });
         }
          else {
+
              editProfileBtn.setVisibility(View.VISIBLE);
+             editProfileBtn.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     startActivity(new Intent(CartActivity.this, ProfileDetailActivity.class));
+                 }
+             });
+
              db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
             List<CartItem> categoryFilterList = new ArrayList<>();

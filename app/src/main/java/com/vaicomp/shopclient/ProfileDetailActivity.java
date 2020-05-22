@@ -79,7 +79,8 @@ public class ProfileDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if(!displayName.getText().toString().equals("") && !emailId.getText().toString().equals("")
-                && !phoneNum.getText().toString().equals("") && !address.getText().toString().equals("")){
+                && !phoneNum.getText().toString().equals("") && !address.getText().toString().equals("")
+                && phoneNum.getText().toString().length() == 10){
                     //preferenceManager.setUID(context, account.getId());
                     preferenceManager.setDisplayName(context,displayName.getText().toString());
                     preferenceManager.setEmailId(context, emailId.getText().toString());
@@ -117,7 +118,7 @@ public class ProfileDetailActivity extends AppCompatActivity {
                     }
                 }
                 else{
-                    Toasty.error(context, "Please Enter All Values.",Toasty.LENGTH_SHORT).show();
+                    Toasty.error(context, "Values Are Not Valid!",Toasty.LENGTH_SHORT).show();
                 }
 
             }
