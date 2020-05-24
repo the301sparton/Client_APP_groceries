@@ -170,6 +170,12 @@ public class HomeActivity extends AppCompatActivity {
                 // This method will be executed once the timer is over
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                 preferences.edit().clear().apply();
+                AppDataBase db = Room.databaseBuilder(context,
+                        AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+
+                db.cartItemDao().nukeTable();
+                db.categoryFilterDao().nukeTable();
+                db.shopItemDao().nukeTable();
                 context.startActivity(new Intent(context, SplashActivity.class));
                 context.finish();
             }
@@ -192,6 +198,7 @@ public class HomeActivity extends AppCompatActivity {
                     return db.cartItemDao().getAll();
                 }
             }.execute().get();
+
             ItemAdapter.updateCartDetails(cartItems,HomeActivity.this);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

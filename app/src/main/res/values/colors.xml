@@ -6,4 +6,6 @@
     <color name="colorPrimary_a">#CD6155</color>
     <color name="textColorDark">#413e66</color>
     <color name="white">#FFF</color>
+    <color name="normalColor">#2471A3</color>
+    <color name="successColor">#1ABC9C</color>
 </resources>

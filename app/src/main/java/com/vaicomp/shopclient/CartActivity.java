@@ -159,12 +159,12 @@ public class CartActivity extends AppCompatActivity {
 
                         else if(omGlobal.getState() == 2 || omGlobal.getState() == 1){
                             fdb.collection("orders").document(order_id)
-                                    .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    .update("state",0).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     placeOrderBtn.setEnabled(true);
                                     Toasty.success(context, "Order Canceled Successfully", Toasty.LENGTH_SHORT).show();
-                                    finish();
+                                    initViews(omGlobal.getOrderId());
                                 }
                             });
                         }
@@ -175,10 +175,8 @@ public class CartActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toasty.success(getApplicationContext(), "Order Received",Toasty.LENGTH_SHORT).show();
-                                    placeOrderBtn.setText(getString(R.string.orderState4));
                                     placeOrderBtn.setEnabled(false);
-                                    TextView tv = findViewById(R.id.orderState);
-                                    tv.setText(getString(R.string.orderState4));
+                                    initViews(omGlobal.getOrderId());
                                 }
                             });
                         }
@@ -205,6 +203,7 @@ public class CartActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     OrderModal orderModal = documentSnapshot.toObject(OrderModal.class);
                     omGlobal = orderModal;
+                    omGlobal.setOrderId(documentSnapshot.getId());
                     order_id = documentSnapshot.getId();
 
                     RecyclerView categoryList = findViewById(R.id.list);
@@ -246,7 +245,10 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setText("Order Delivered.");
                         tv.setText(getString(R.string.orderState4));
                     }
-
+                    else if(orderModal.getState() == 0){
+                        placeOrderBtn.setText("Order is Canceled");
+                        tv.setText("Order Canceled");
+                    }
                     baseView.setVisibility(View.VISIBLE);
                     loader.setVisibility(View.GONE);
                 }
