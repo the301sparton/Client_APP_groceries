@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.squareup.picasso.Picasso;
 import com.vaicomp.shopclient.Adapters.ItemAdapter;
 import com.vaicomp.shopclient.CategoryPicker_Alert;
 import com.vaicomp.shopclient.R;
@@ -30,6 +31,7 @@ import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
 import com.vaicomp.shopclient.db.CategoryFilter;
 import com.vaicomp.shopclient.db.ShopItem;
+import com.vaicomp.shopclient.preferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,12 @@ public class HomeFragment extends Fragment {
         clear = root.findViewById(R.id.calc_clear_txt_Prise);
         ImageView filterBtn = root.findViewById(R.id.filterBtn);
 
+        ImageView banner = root.findViewById(R.id.banner);
+        String bannerUrl = preferenceManager.getBannerUrl(getContext());
+        Picasso.get()
+                .load(bannerUrl)
+                .fit()
+                .into(banner);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -40,14 +40,14 @@ public class preferenceManager {
     }
 
 
-    static void setCategoryState(Context context, String categoryState){
+    static void setBannerURL(Context context, String categoryState){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.edit().putString("categoryState", categoryState).apply();
+        sharedPreferences.edit().putString("bannerURL", categoryState).apply();
     }
 
-    public static String getCategoryState(Context context){
+    public static String getBannerUrl(Context context){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getString("categoryState","");
+        return sharedPreferences.getString("bannerURL","");
     }
 
 

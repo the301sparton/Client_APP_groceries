@@ -156,6 +156,8 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 final String itemState = String.valueOf(documentSnapshot.get("itemState"));
+                final String bannerUrl = String.valueOf(documentSnapshot.get("bannerURL"));
+                preferenceManager.setBannerURL(activity, bannerUrl);
                 if(!itemState.equals(preferenceManager.getItemState(activity)))
                 {
                     db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
