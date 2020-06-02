@@ -89,6 +89,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
         holder.quantity.setNumber(String.valueOf(item.getQuantity()));
         holder.rate.setText("Rate: ₹"+ item.getRate());
         holder.amount.setText("₹"+item.getAmount());
+
         Picasso.get()
                 .load(item.getImageUrl())
                 .resize(350, 350)

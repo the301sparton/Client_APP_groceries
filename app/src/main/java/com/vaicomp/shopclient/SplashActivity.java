@@ -208,7 +208,7 @@ public class SplashActivity extends AppCompatActivity {
                                                 protected Void doInBackground(Void... voids) {
                                                     local_db.categoryFilterDao().insertAll(categoryFilterList);
                                                     local_db.shopItemDao().insertAll(itemList);
-                                                    activity.startActivity(new Intent(activity, HomeActivity.class));
+                                                    activity.startActivity(new Intent(activity, CategoryGridActivity.class));
                                                     preferenceManager.setItemState(activity, itemState);
                                                     activity.finish();
                                                     return null;
@@ -223,7 +223,7 @@ public class SplashActivity extends AppCompatActivity {
                     });
                 }
                 else{
-                    activity.startActivity(new Intent(activity, HomeActivity.class));
+                    activity.startActivity(new Intent(activity, CategoryGridActivity.class));
                     activity.finish();
                 }
             }

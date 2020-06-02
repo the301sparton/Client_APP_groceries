@@ -16,7 +16,6 @@
             android:id="@+id/item_image"
             android:layout_width="0dp"
             android:layout_weight="2"
-            android:src="@drawable/ic_profile"
             android:layout_height="80dp"/>
 
         <LinearLayout
