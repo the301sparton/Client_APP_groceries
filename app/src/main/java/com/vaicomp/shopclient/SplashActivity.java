@@ -160,7 +160,7 @@ public class SplashActivity extends AppCompatActivity {
                 preferenceManager.setBannerURL(activity, bannerUrl);
                 if(!itemState.equals(preferenceManager.getItemState(activity)))
                 {
-                    db.collection("shopItems").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    db.collection("shopItems").whereGreaterThan("itemRate", 0).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();

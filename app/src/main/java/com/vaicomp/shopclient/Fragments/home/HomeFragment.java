@@ -1,4 +1,4 @@
-package com.vaicomp.shopclient.ui.home;
+package com.vaicomp.shopclient.Fragments.home;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -69,12 +69,7 @@ public class HomeFragment extends Fragment {
         clear = root.findViewById(R.id.calc_clear_txt_Prise);
         ImageView filterBtn = root.findViewById(R.id.filterBtn);
 
-        ImageView banner = root.findViewById(R.id.banner);
-        String bannerUrl = preferenceManager.getBannerUrl(getContext());
-        Picasso.get()
-                .load(bannerUrl)
-                .fit()
-                .into(banner);
+
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

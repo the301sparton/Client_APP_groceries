@@ -15,8 +15,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.squareup.picasso.Picasso;
 import com.vaicomp.shopclient.Adapters.CategoryAdapter;
 import com.vaicomp.shopclient.Adapters.CategoryGridAdapter;
 import com.vaicomp.shopclient.db.AppDataBase;
@@ -38,7 +40,7 @@ public class CategoryGridActivity extends AppCompatActivity {
 
         final AppDataBase db = Room.databaseBuilder(getApplicationContext(),
                 AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-        List<CategoryFilter> categoryFilterList = new ArrayList<>();
+        List<CategoryFilter> categoryFilterList;
         try {
             categoryFilterList = new AsyncTask<Void, Void, List<CategoryFilter>>() {
                 @Override
@@ -59,17 +61,33 @@ public class CategoryGridActivity extends AppCompatActivity {
             gridView.setLayoutManager(mLayoutManager);
             gridView.setItemAnimator(new DefaultItemAnimator());
 
-           gridView.setHasFixedSize(false);
+            gridView.setHasFixedSize(false);
             CategoryGridAdapter adapter = new CategoryGridAdapter(CategoryGridActivity.this, categoryFilterList);
             gridView.setAdapter(adapter);
 
-
+            ImageView banner = findViewById(R.id.banner);
+            String bannerUrl = preferenceManager.getBannerUrl(getApplicationContext());
+            Picasso.get()
+                    .load(bannerUrl)
+                    .fit()
+                    .into(banner);
             LinearLayout skipBar = findViewById(R.id.skipBar);
 
             skipBar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(CategoryGridActivity.this, HomeActivity.class));
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            db.categoryFilterDao().removeAllFilters();
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            startActivity(new Intent(CategoryGridActivity.this, HomeActivity.class));
+                        }
+                    }.execute();
                 }
             });
 
@@ -78,23 +96,3 @@ public class CategoryGridActivity extends AppCompatActivity {
         }
     }
 }
-// class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-//    private int space;
-//
-//    public SpacesItemDecoration(int space) {
-//        this.space = space;
-//    }
-//
-//    @Override
-//    public void getItemOffsets(Rect outRect, View view,
-//                               RecyclerView parent, RecyclerView.State state) {
-//       outRect.bottom = 20;
-//
-//        // Add top margin only for the first item to avoid double space between items
-//        if (parent.getChildLayoutPosition(view) == 0) {
-//            outRect.top = space;
-//        } else {
-//            outRect.top = 0;
-//        }
-//    }
-//}

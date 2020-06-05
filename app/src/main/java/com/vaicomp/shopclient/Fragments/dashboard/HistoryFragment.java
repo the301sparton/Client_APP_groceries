@@ -1,4 +1,4 @@
-package com.vaicomp.shopclient.ui.dashboard;
+package com.vaicomp.shopclient.Fragments.dashboard;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;

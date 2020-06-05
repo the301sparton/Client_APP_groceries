@@ -219,7 +219,7 @@
                 android:padding="10dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_edit"
+                app:srcCompat="@drawable/ic_edit"
                 android:layout_height="match_parent"/>
 
         </LinearLayout>
@@ -311,9 +311,30 @@
             android:textColor="#000"
             android:textSize="14sp"/>
 
+        <TextView
+            android:id="@+id/sloatTitle"
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/phoneNumberValue"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="Pick Your Delivery Slot"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+        <Spinner
+            android:id="@+id/slotValue"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/sloatTitle"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/josefinsans"
+            android:text="7219309093"
+            android:textColor="#000"
+            android:textSize="14sp"/>
+
         <View
             android:id="@+id/seprator3"
-            android:layout_below="@id/phoneNumberValue"
+            android:layout_below="@id/slotValue"
             android:layout_marginTop="15dp"
             android:background="#D6DBDF"
             android:layout_width="match_parent"

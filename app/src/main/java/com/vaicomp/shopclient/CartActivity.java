@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,6 +55,8 @@ public class CartActivity extends AppCompatActivity {
     ScrollView baseView;
     LinearLayout loader;
     ImageView editProfileBtn;
+    Spinner slot;
+    ArrayList<String> spinnerArray;
 
 
     @SuppressLint("StaticFieldLeak")
@@ -67,7 +71,7 @@ public class CartActivity extends AppCompatActivity {
         loader = findViewById(R.id.loader);
         loader.setVisibility(View.VISIBLE);
         baseView.setVisibility(View.GONE);
-
+        slot = findViewById(R.id.slotValue);
         order_id = getIntent().getStringExtra("ORDER_ID");
 
         fdb = FirebaseFirestore.getInstance();
@@ -97,6 +101,17 @@ public class CartActivity extends AppCompatActivity {
 
                 editProfileBtn = findViewById(R.id.editProfile);
 
+
+                spinnerArray = new ArrayList<>();
+                spinnerArray.add("Click ME!");
+                spinnerArray = (ArrayList<String>) documentSnapshot.get("slots");
+                spinnerArray.add("Click ME!");
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
+                        (getApplicationContext(), android.R.layout.simple_spinner_item,
+                                spinnerArray);
+                slot.setAdapter(spinnerArrayAdapter);
+                slot.setSelection(spinnerArray.size() - 1);
+
                 initViews(order_id);
 
 
@@ -107,54 +122,57 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setEnabled(false);
                         final Context context = getApplicationContext();
                         if(order_id.equals("NA")){
+                            if(!slot.getSelectedItem().toString().equals("Click ME!")){
+                                final OrderModal orderModal = new OrderModal();
+                                orderModal.setUid(preferenceManager.getUID(context));
+                                orderModal.setShopId("d1ajtkwauTOe8z27xdH8");
+                                orderModal.setUname(preferenceManager.getDisplayName(context));
+                                orderModal.setPhoneNumber(preferenceManager.getPhoneNumber(context));
+                                orderModal.setDeliveryAddress(preferenceManager.getAdress(context));
+                                orderModal.setDate(new Date());
 
+                                orderModal.setItemList(adapter.getAdapterData());
+                                orderModal.setState(1);
+                                orderModal.setDeliveryCost(deliveryCharge);
+                                orderModal.setItemTotal(amount);
+                                orderModal.setGrandTotal(amount + deliveryCharge);
+                                orderModal.setOrderSlot(slot.getSelectedItem().toString());
 
+                                fdb.collection("orders").add(orderModal).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        orderModal.setOrderId(documentReference.getId());
+                                        new AsyncTask<Void, Void, Void>() {
+                                            @Override
+                                            protected Void doInBackground(Void... voids) {
+                                                db.cartItemDao().nukeTable();
+                                                return null;
+                                            }
 
+                                            @Override
+                                            protected void onPostExecute(Void aVoid) {
+                                                super.onPostExecute(aVoid);
+                                                TextView tv = findViewById(R.id.orderNumber);
+                                                tv.setText(orderModal.getOrderId());
 
-                            final OrderModal orderModal = new OrderModal();
-                            orderModal.setUid(preferenceManager.getUID(context));
-                            orderModal.setShopId("d1ajtkwauTOe8z27xdH8");
-                            orderModal.setUname(preferenceManager.getDisplayName(context));
-                            orderModal.setPhoneNumber(preferenceManager.getPhoneNumber(context));
-                            orderModal.setDeliveryAddress(preferenceManager.getAdress(context));
-                            orderModal.setDate(new Date());
+                                                tv = findViewById(R.id.Date);
+                                                String pattern = "MMMM dd, yyyy hh:mm a";
+                                                SimpleDateFormat simpleDateFormat =
+                                                        new SimpleDateFormat(pattern, new Locale("en", "IN"));
+                                                tv.setText(simpleDateFormat.format(orderModal.getDate()));
 
-                            orderModal.setItemList(adapter.getAdapterData());
-                            orderModal.setState(1);
-                            orderModal.setDeliveryCost(deliveryCharge);
-                            orderModal.setItemTotal(amount);
-                            orderModal.setGrandTotal(amount + deliveryCharge);
-
-                            fdb.collection("orders").add(orderModal).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    orderModal.setOrderId(documentReference.getId());
-                                    new AsyncTask<Void, Void, Void>() {
-                                        @Override
-                                        protected Void doInBackground(Void... voids) {
-                                            db.cartItemDao().nukeTable();
-                                            return null;
-                                        }
-
-                                        @Override
-                                        protected void onPostExecute(Void aVoid) {
-                                            super.onPostExecute(aVoid);
-                                            TextView tv = findViewById(R.id.orderNumber);
-                                            tv.setText(orderModal.getOrderId());
-
-                                            tv = findViewById(R.id.Date);
-                                            String pattern = "MMMM dd, yyyy hh:mm a";
-                                            SimpleDateFormat simpleDateFormat =
-                                                    new SimpleDateFormat(pattern, new Locale("en", "IN"));
-                                            tv.setText(simpleDateFormat.format(orderModal.getDate()));
-
-                                            Toasty.success(context, "Order Placed Successfully!", Toasty.LENGTH_SHORT).show();
-                                            initViews(orderModal.getOrderId());
-                                            placeOrderBtn.setEnabled(true);
-                                        }
-                                    }.execute();
-                                }
-                            });
+                                                Toasty.success(context, "Order Placed Successfully!", Toasty.LENGTH_SHORT).show();
+                                                initViews(orderModal.getOrderId());
+                                                placeOrderBtn.setEnabled(true);
+                                            }
+                                        }.execute();
+                                    }
+                                });
+                            }
+                            else{
+                                placeOrderBtn.setEnabled(true);
+                                Toasty.error(context, "Please Select Slot!",Toasty.LENGTH_SHORT).show();
+                            }
                         }
 
                         else if(omGlobal.getState() == 2 || omGlobal.getState() == 1){
@@ -211,6 +229,17 @@ public class CartActivity extends AppCompatActivity {
                     categoryList.setLayoutManager(mLayoutManager);
                     categoryList.setItemAnimator(new DefaultItemAnimator());
 
+                    int position = 0, i = 0;
+                    for(String slotName : spinnerArray){
+                        if(slotName.equals(orderModal.getOrderSlot())){
+                            position = i;
+                            break;
+                        }
+                        i++;
+                    }
+                    slot.setSelection(position);
+                    slot.setEnabled(false);
+
                     adapter = new CartAdapter(orderModal.getItemList(), orderModal.getState(), CartActivity.this);
                     categoryList.setAdapter(adapter);
 
@@ -249,6 +278,8 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setText("Order is Canceled");
                         tv.setText("Order Canceled");
                     }
+
+
                     baseView.setVisibility(View.VISIBLE);
                     loader.setVisibility(View.GONE);
                 }
@@ -266,7 +297,7 @@ public class CartActivity extends AppCompatActivity {
 
              db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
-            List<CartItem> categoryFilterList = new ArrayList<>();
+            List<CartItem> categoryFilterList;
             try {
                 categoryFilterList = new AsyncTask<Void, Void, List<CartItem>>() {
                     @Override
@@ -292,6 +323,8 @@ public class CartActivity extends AppCompatActivity {
 
                 tv = findViewById(R.id.totalAmount);
                 tv.setText(String.valueOf(amount + deliveryCharge));
+
+
 
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
