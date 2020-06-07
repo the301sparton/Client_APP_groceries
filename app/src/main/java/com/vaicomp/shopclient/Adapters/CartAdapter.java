@@ -17,6 +17,8 @@ import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -59,8 +61,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(CartViewHolder holder, final int position) {
         CartItem item = cartItems.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.rateQ.setText(MessageFormat.format("{0} X ₹ {1}", item.getQuantity(), item.getRate()));
-        holder.amount.setText(String.format("₹ %s", item.getRate() * item.getQuantity()));
+        holder.rateQ.setText(MessageFormat.format("{0} X ₹ {1}", item.getQuantity(), round(item.getRate(),2)));
+        holder.amount.setText(String.format("₹ %s", round(item.getRate() * item.getQuantity(),2)));
 
 
         if(type == 0) {
@@ -91,6 +93,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                                 for(CartItem orderModal : cartItems){
                                     amount += orderModal.getAmount();
                                 }
+                                amount = round(amount,2);
                                 TextView tv = context.findViewById(R.id.itemTotal);
                                 tv.setText(MessageFormat.format("₹ {0}", amount));
 
@@ -110,6 +113,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public List<CartItem> getAdapterData(){
         return  cartItems;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     @Override

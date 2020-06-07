@@ -21,6 +21,8 @@ import com.vaicomp.shopclient.db.AppDataBase;
 import com.vaicomp.shopclient.db.CartItem;
 import com.vaicomp.shopclient.db.ShopItem;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -88,7 +90,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
         holder.name.setText(item.getItemName());
         holder.quantity.setNumber(String.valueOf(item.getQuantity()));
         holder.rate.setText("Rate: ₹"+ item.getRate());
-        holder.amount.setText("₹"+item.getAmount());
+        holder.amount.setText("₹"+round(item.getAmount(),2));
 
         Picasso.get()
                 .load(item.getImageUrl())
@@ -99,8 +101,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
         holder.quantity.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
             @Override
             public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
+
+                Double amount = round(round(itemList.get(position).getRate(),2) * Integer.parseInt(holder.quantity.getNumber()), 2);
                 itemList.get(position).setQuantity(Integer.valueOf(holder.quantity.getNumber()));
-                itemList.get(position).setAmount(itemList.get(position).getRate() * Integer.parseInt(holder.quantity.getNumber()));
+                itemList.get(position).setAmount(amount);
 
                 ShopItem shopItem = itemList.get(position);
 
@@ -150,7 +154,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
                     }
 
                 }
-                holder.amount.setText(String.valueOf(shopItem.getRate() * Integer.parseInt(holder.quantity.getNumber())));
+                holder.amount.setText(String.valueOf(amount));
 
             }
         });
@@ -173,9 +177,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
         }
 
         totalItems.setText(itemCount + " Items");
+        amount = round(amount,2);
         totalamount.setText("₹ "+amount);
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     @Override
     public int getItemCount() {
