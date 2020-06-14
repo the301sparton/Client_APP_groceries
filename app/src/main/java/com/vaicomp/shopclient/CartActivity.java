@@ -245,10 +245,10 @@ public class CartActivity extends AppCompatActivity {
 
 
                     TextView tv = findViewById(R.id.itemTotal);
-                    tv.setText(MessageFormat.format("₹ {0}", orderModal.getItemTotal()));
+                    tv.setText(MessageFormat.format("₹ {0}", CartAdapter.round(orderModal.getItemTotal(),2)));
 
                     tv = findViewById(R.id.totalAmount);
-                    tv.setText(String.format("₹ %s", orderModal.getItemTotal() + orderModal.getDeliveryCost()));
+                    tv.setText(String.format("₹ %s", CartAdapter.round((orderModal.getItemTotal() + orderModal.getDeliveryCost()),2)));
 
 
                     tv = findViewById(R.id.orderNumber);
@@ -319,10 +319,10 @@ public class CartActivity extends AppCompatActivity {
                 }
 
                 TextView tv = findViewById(R.id.itemTotal);
-                tv.setText(MessageFormat.format("₹ {0}", amount));
+                tv.setText(MessageFormat.format("₹ {0}", CartAdapter.round(amount,2)));
 
                 tv = findViewById(R.id.totalAmount);
-                tv.setText(String.valueOf(amount + deliveryCharge));
+                tv.setText(String.valueOf(CartAdapter.round((amount + deliveryCharge),2)));
 
 
 

@@ -16,7 +16,7 @@
         android:textSize="30sp"
         android:textColor="@color/textColorDark"
         android:fontFamily="@font/josefinsansitalic"
-        android:text="Vaikuntha Softpark's" />
+        android:text="Shree Nikalas Enterprises" />
 
     <TextView
         android:id="@+id/productName"
@@ -28,7 +28,7 @@
         android:textColor="@color/textColorDark"
         android:gravity="center"
         android:fontFamily="@font/josefinsansitalic"
-        android:text="VaiShop" />
+        android:text="Shree Basket" />
 
 
 

@@ -90,7 +90,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                 new SimpleDateFormat(pattern, new Locale("en", "IN"));
 
         holder.orderedOn.setText(simpleDateFormat.format(item.getDate()));
-        holder.amount.setText(String.valueOf(item.getGrandTotal()));
+        holder.amount.setText(String.valueOf(CartAdapter.round(item.getGrandTotal(),2)));
 
         if (item.getState() == 1) {
             holder.orderState.setTextColor(context.getResources().getColor(R.color.normalColor));

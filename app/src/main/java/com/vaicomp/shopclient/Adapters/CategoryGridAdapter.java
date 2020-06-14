@@ -2,7 +2,6 @@ package com.vaicomp.shopclient.Adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
@@ -18,11 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
-import com.vaicomp.shopclient.CartActivity;
 import com.vaicomp.shopclient.HomeActivity;
 import com.vaicomp.shopclient.R;
 import com.vaicomp.shopclient.db.AppDataBase;
-import com.vaicomp.shopclient.db.CartItem;
 import com.vaicomp.shopclient.db.CategoryFilter;
 
 import java.util.List;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Client_APP</string>
+    <string name="app_name">Shree Basket</string>
     <string name="title_activity_layout_main">Shop</string>
     <string name="title_home">Shop</string>
     <string name="title_dashboard">History</string>

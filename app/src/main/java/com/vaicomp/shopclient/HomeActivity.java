@@ -158,12 +158,19 @@ public class HomeActivity extends AppCompatActivity {
                 // This method will be executed once the timer is over
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                 preferences.edit().clear().apply();
-                AppDataBase db = Room.databaseBuilder(context,
+                final AppDataBase db = Room.databaseBuilder(context,
                         AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
 
-                db.cartItemDao().nukeTable();
-                db.categoryFilterDao().nukeTable();
-                db.shopItemDao().nukeTable();
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        db.cartItemDao().nukeTable();
+                        db.categoryFilterDao().nukeTable();
+                        db.shopItemDao().nukeTable();
+                        return null;
+                    }
+                }.execute();
+
                 context.startActivity(new Intent(context, SplashActivity.class));
                 context.finish();
             }
