@@ -65,7 +65,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.amount.setText(String.format("₹ %s", round(item.getRate() * item.getQuantity(),2)));
 
 
-        if(type == 0) {
+        if(type == -1) {
             holder.delteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

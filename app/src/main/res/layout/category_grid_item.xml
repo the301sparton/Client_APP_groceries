@@ -15,8 +15,7 @@
         android:layout_height="match_parent"
         android:fontFamily="@font/josefinsans"
         android:gravity="center"
-        android:textStyle="bold"
         android:text="RICE"
         android:textColor="#000"
-        android:textSize="14sp" />
+        android:textSize="20sp" />
 </FrameLayout>

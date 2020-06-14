@@ -3,6 +3,7 @@ package com.vaicomp.shopclient;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -80,7 +81,7 @@ public class CartActivity extends AppCompatActivity {
 
         fdb.collection("shopDetails").document("/d1ajtkwauTOe8z27xdH8").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
+            public void onSuccess(final DocumentSnapshot documentSnapshot) {
                 TextView tv = findViewById(R.id.shopName);
                 final String shopName = String.valueOf(documentSnapshot.get("shopName"));
                 tv.setText(shopName);
@@ -175,25 +176,38 @@ public class CartActivity extends AppCompatActivity {
                             }
                         }
 
-                        else if(omGlobal.getState() == 2 || omGlobal.getState() == 1){
+                        else if(omGlobal.getState() == 1){
+                            loader.setVisibility(View.VISIBLE);
+                            baseView.setVisibility(View.GONE);
                             fdb.collection("orders").document(order_id)
                                     .update("state",0).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     placeOrderBtn.setEnabled(true);
+                                    baseView.setVisibility(View.VISIBLE);
+                                    loader.setVisibility(View.GONE);
                                     Toasty.success(context, "Order Canceled Successfully", Toasty.LENGTH_SHORT).show();
                                     initViews(omGlobal.getOrderId());
                                 }
                             });
                         }
 
-                        else if(omGlobal.getState() == 3){
+                        else if(omGlobal.getState() == 2){
+                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                            callIntent.setData(Uri.parse("tel:" + documentSnapshot.get("contactNumber")));
+                            startActivity(callIntent);
+                        }
 
+                        else if(omGlobal.getState() == 3){
+                            loader.setVisibility(View.VISIBLE);
+                            baseView.setVisibility(View.GONE);
                             fdb.collection("orders").document(order_id).update("state",4).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toasty.success(getApplicationContext(), "Order Received",Toasty.LENGTH_SHORT).show();
                                     placeOrderBtn.setEnabled(false);
+                                    baseView.setVisibility(View.VISIBLE);
+                                    loader.setVisibility(View.GONE);
                                     initViews(omGlobal.getOrderId());
                                 }
                             });
@@ -265,7 +279,7 @@ public class CartActivity extends AppCompatActivity {
                         placeOrderBtn.setText("Cancel Order");
                         tv.setText(getString(R.string.orderState1));
                     } else if (orderModal.getState() == 2) {
-                        placeOrderBtn.setText("Cancel Order");
+                        placeOrderBtn.setText("Call Shop");
                         tv.setText(getString(R.string.orderState2));
                     } else if (orderModal.getState() == 3) {
                         placeOrderBtn.setText("Confirm Delivery");
@@ -311,7 +325,7 @@ public class CartActivity extends AppCompatActivity {
                 categoryList.setLayoutManager(mLayoutManager);
                 categoryList.setItemAnimator(new DefaultItemAnimator());
 
-                adapter = new CartAdapter(categoryFilterList, 0, CartActivity.this);
+                adapter = new CartAdapter(categoryFilterList, -1, CartActivity.this);
                 categoryList.setAdapter(adapter);
 
                 for (CartItem item : categoryFilterList) {

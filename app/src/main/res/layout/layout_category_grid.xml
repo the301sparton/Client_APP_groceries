@@ -9,9 +9,10 @@
     <ImageView
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="90dp"/>
+        android:layout_height="100dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
         android:id="@+id/grid_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
