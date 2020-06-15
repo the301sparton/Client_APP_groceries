@@ -3,10 +3,10 @@
     <stroke
         android:drawable="@android:color/transparent"
         android:width="1dp"
-        android:color="#E0EDF9" >
+        android:color="#AEB6BF" >
     </stroke>
 
-    <solid android:color="#E0EDF9" />
+    <solid android:color="#AEB6BF" />
 
     <corners
         android:bottomLeftRadius="10dp"

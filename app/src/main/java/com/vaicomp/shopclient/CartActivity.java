@@ -46,7 +46,7 @@ import es.dmoral.toasty.Toasty;
 public class CartActivity extends AppCompatActivity {
 
     double amount = 0;
-    double deliveryCharge;
+    double deliveryCharge, dMargin;
     CartAdapter adapter;
     AppDataBase db;
     FirebaseFirestore fdb;
@@ -95,10 +95,13 @@ public class CartActivity extends AppCompatActivity {
                 tv = findViewById(R.id.phoneNumberValue);
                 tv.setText(preferenceManager.getPhoneNumber(getApplicationContext()));
 
-                tv = findViewById(R.id.deliveryCharges);
 
                 deliveryCharge = Double.parseDouble(String.valueOf(documentSnapshot.get("deliveryCharge")));
-                tv.setText(String.valueOf(deliveryCharge));
+
+                dMargin = Double.parseDouble(String.valueOf(documentSnapshot.get("dMargin")));
+
+
+
 
                 editProfileBtn = findViewById(R.id.editProfile);
 
@@ -124,6 +127,9 @@ public class CartActivity extends AppCompatActivity {
                         final Context context = getApplicationContext();
                         if(order_id.equals("NA")){
                             if(!slot.getSelectedItem().toString().equals("Click ME!")){
+                                loader.setVisibility(View.VISIBLE);
+                                baseView.setVisibility(View.GONE);
+
                                 final OrderModal orderModal = new OrderModal();
                                 orderModal.setUid(preferenceManager.getUID(context));
                                 orderModal.setShopId("d1ajtkwauTOe8z27xdH8");
@@ -134,7 +140,13 @@ public class CartActivity extends AppCompatActivity {
 
                                 orderModal.setItemList(adapter.getAdapterData());
                                 orderModal.setState(1);
-                                orderModal.setDeliveryCost(deliveryCharge);
+                                if(amount >= dMargin){
+                                    deliveryCharge = 0d;
+                                    orderModal.setDeliveryCost(0d);
+                                }
+                                else{
+                                    orderModal.setDeliveryCost(deliveryCharge);
+                                }
                                 orderModal.setItemTotal(amount);
                                 orderModal.setGrandTotal(amount + deliveryCharge);
                                 orderModal.setOrderSlot(slot.getSelectedItem().toString());
@@ -161,7 +173,8 @@ public class CartActivity extends AppCompatActivity {
                                                 SimpleDateFormat simpleDateFormat =
                                                         new SimpleDateFormat(pattern, new Locale("en", "IN"));
                                                 tv.setText(simpleDateFormat.format(orderModal.getDate()));
-
+                                                baseView.setVisibility(View.VISIBLE);
+                                                loader.setVisibility(View.GONE);
                                                 Toasty.success(context, "Order Placed Successfully!", Toasty.LENGTH_SHORT).show();
                                                 initViews(orderModal.getOrderId());
                                                 placeOrderBtn.setEnabled(true);
@@ -334,6 +347,12 @@ public class CartActivity extends AppCompatActivity {
 
                 TextView tv = findViewById(R.id.itemTotal);
                 tv.setText(MessageFormat.format("₹ {0}", CartAdapter.round(amount,2)));
+
+                if(amount >= dMargin){
+                    deliveryCharge = 0d;
+                }
+                tv = findViewById(R.id.deliveryCharges);
+                tv.setText(String.valueOf(deliveryCharge));
 
                 tv = findViewById(R.id.totalAmount);
                 tv.setText(String.valueOf(CartAdapter.round((amount + deliveryCharge),2)));
