@@ -52,6 +52,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "408887360952-37ulkicnq173esblbd7lm3ls1e92tmv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vaicomp.shopclient",
+            "certificate_hash": "075d4e9d443b4cf5405986d4ae225f44a5c71ac1"
+          }
+        },
+        {
+          "client_id": "408887360952-3lb1d69qedfd4rrkd7911ufpqpvm38g5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vaicomp.shopclient",
+            "certificate_hash": "158f75f2973bc4e5ef8f4e1ba1039c0ca8a63a47"
+          }
+        },
+        {
           "client_id": "408887360952-vanbkr95u41jbqi3ugs2kmqsmfpi2u4l.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
