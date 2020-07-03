@@ -330,12 +330,12 @@
             android:fontFamily="@font/josefinsans"
             android:text="7219309093"
             android:textColor="#000"
+            android:paddingBottom="15dp"
             android:textSize="14sp"/>
 
         <View
             android:id="@+id/seprator3"
             android:layout_below="@id/slotValue"
-            android:layout_marginTop="15dp"
             android:background="#D6DBDF"
             android:layout_width="match_parent"
             android:layout_height="1dp"/>

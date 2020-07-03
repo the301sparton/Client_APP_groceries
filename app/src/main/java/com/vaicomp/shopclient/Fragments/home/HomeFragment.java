@@ -34,6 +34,8 @@ import com.vaicomp.shopclient.db.ShopItem;
 import com.vaicomp.shopclient.preferenceManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -113,6 +115,12 @@ public class HomeFragment extends Fragment {
                     list.clear();
                     list.addAll(fireBaseList);
                 }
+                Collections.sort(list, new Comparator<ShopItem>() {
+                    @Override
+                    public int compare(ShopItem o1, ShopItem o2) {
+                        return o1.getItemName().compareTo(o2.getItemName());
+                    }
+                });
                 adapter.notifyDataSetChanged();
             }
         });
@@ -172,6 +180,12 @@ public class HomeFragment extends Fragment {
             if(adapter == null){
                 list = new ArrayList<>();
                 list.addAll(fireBaseList);
+                Collections.sort(list, new Comparator<ShopItem>() {
+                    @Override
+                    public int compare(ShopItem o1, ShopItem o2) {
+                        return o1.getItemName().compareTo(o2.getItemName());
+                    }
+                });
                 adapter = new ItemAdapter(list, getActivity());
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                 listView.setLayoutManager(mLayoutManager);
@@ -181,6 +195,12 @@ public class HomeFragment extends Fragment {
             else {
                 list.clear();
                 list.addAll(fireBaseList);
+                Collections.sort(list, new Comparator<ShopItem>() {
+                    @Override
+                    public int compare(ShopItem o1, ShopItem o2) {
+                        return o1.getItemName().compareTo(o2.getItemName());
+                    }
+                });
                 if(list.size()>0) {
                     listView.setVisibility(View.VISIBLE);
                     adapter.notifyDataSetChanged();

@@ -25,6 +25,7 @@ import java.util.List;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CartItem> cartItems;
     private int type;
+    private double dMargin, deliveryCharge,deliveryChargeOriginal;
     private Activity context;
 
     static class CartViewHolder extends RecyclerView.ViewHolder {
@@ -41,9 +42,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
 
-    public CartAdapter(List<CartItem> moviesList, int type, Activity context) {
+    public CartAdapter(List<CartItem> moviesList, int type,double dMargin, double deliveryCharge, Activity context) {
         this.cartItems = moviesList;
+        this.deliveryChargeOriginal = deliveryCharge;
         this.context = context;
+        this.dMargin = dMargin;
         this.type = type;
     }
 
@@ -94,11 +97,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                                     amount += orderModal.getAmount();
                                 }
                                 amount = round(amount,2);
+
+                                if(amount >= dMargin){
+                                    deliveryCharge = 0d;
+                                }
+                                else{
+                                    deliveryCharge = deliveryChargeOriginal;
+                                }
+                                TextView tvD = context.findViewById(R.id.deliveryCharges);
+                                tvD.setText(String.valueOf(deliveryCharge));
+
                                 TextView tv = context.findViewById(R.id.itemTotal);
                                 tv.setText(MessageFormat.format("₹ {0}", amount));
 
                                 tv = context.findViewById(R.id.totalAmount);
-                                TextView tvD = context.findViewById(R.id.deliveryCharges);
                                 tv.setText(String.format("₹ %s", amount + Double.parseDouble(String.valueOf(tvD.getText()))));
                             }
                         }

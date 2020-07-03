@@ -33,7 +33,7 @@ public class HistoryFragment extends Fragment {
 
     private RecyclerView listView;
     private List<OrderModal> list;
-    private LinearLayout loader;
+    private LinearLayout loader, noResult;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +41,7 @@ public class HistoryFragment extends Fragment {
         list = new ArrayList<>();
         View root = inflater.inflate(R.layout.fragment_history, container, false);
         listView = root.findViewById(R.id.list);
+        noResult = root.findViewById(R.id.noResult);
 
         loader = root.findViewById(R.id.loader);
         loader.setVisibility(View.VISIBLE);
@@ -89,6 +90,9 @@ public class HistoryFragment extends Fragment {
                     Log.i("OBJ: ", String.valueOf(orderModal));
                 }
 
+                listView.setVisibility(View.VISIBLE);
+                loader.setVisibility(View.GONE);
+
                 if(queryDocumentSnapshots.size() > 0) {
 
                     Collections.sort(list, new Comparator<OrderModal>() {
@@ -105,9 +109,12 @@ public class HistoryFragment extends Fragment {
                     listView.setItemAnimator(new DefaultItemAnimator());
                     listView.setAdapter(adapter);
                 }
+                else {
+                    listView.setVisibility(View.GONE);
+                    noResult.setVisibility(View.VISIBLE);
+                }
 
-                listView.setVisibility(View.VISIBLE);
-                loader.setVisibility(View.GONE);
+
             }
         });
     }

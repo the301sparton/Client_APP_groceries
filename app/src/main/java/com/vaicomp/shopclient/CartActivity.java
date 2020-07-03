@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,10 +35,8 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import es.dmoral.toasty.Toasty;
@@ -46,7 +44,7 @@ import es.dmoral.toasty.Toasty;
 public class CartActivity extends AppCompatActivity {
 
     double amount = 0;
-    double deliveryCharge, dMargin;
+    double deliveryCharge, deliveryChargeOriginal, dMargin;
     CartAdapter adapter;
     AppDataBase db;
     FirebaseFirestore fdb;
@@ -96,13 +94,10 @@ public class CartActivity extends AppCompatActivity {
                 tv.setText(preferenceManager.getPhoneNumber(getApplicationContext()));
 
 
-                deliveryCharge = Double.parseDouble(String.valueOf(documentSnapshot.get("deliveryCharge")));
+                deliveryChargeOriginal = Double.parseDouble(String.valueOf(documentSnapshot.get("deliveryCharge")));
 
                 dMargin = Double.parseDouble(String.valueOf(documentSnapshot.get("dMargin")));
-
-
-
-
+                
                 editProfileBtn = findViewById(R.id.editProfile);
 
 
@@ -111,7 +106,7 @@ public class CartActivity extends AppCompatActivity {
                 spinnerArray = (ArrayList<String>) documentSnapshot.get("slots");
                 spinnerArray.add("Click ME!");
                 ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
-                        (getApplicationContext(), android.R.layout.simple_spinner_item,
+                        (getApplicationContext(), R.layout.slot_spinner_item,
                                 spinnerArray);
                 slot.setAdapter(spinnerArrayAdapter);
                 slot.setSelection(spinnerArray.size() - 1);
@@ -140,13 +135,20 @@ public class CartActivity extends AppCompatActivity {
 
                                 orderModal.setItemList(adapter.getAdapterData());
                                 orderModal.setState(1);
+                                amount = 0;
+                                for (CartItem item : adapter.getAdapterData()) {
+                                    amount += item.getAmount();
+                                }
+
                                 if(amount >= dMargin){
                                     deliveryCharge = 0d;
                                     orderModal.setDeliveryCost(0d);
                                 }
                                 else{
+                                    deliveryCharge = deliveryChargeOriginal;
                                     orderModal.setDeliveryCost(deliveryCharge);
                                 }
+
                                 orderModal.setItemTotal(amount);
                                 orderModal.setGrandTotal(amount + deliveryCharge);
                                 orderModal.setOrderSlot(slot.getSelectedItem().toString());
@@ -267,19 +269,26 @@ public class CartActivity extends AppCompatActivity {
                     slot.setSelection(position);
                     slot.setEnabled(false);
 
-                    adapter = new CartAdapter(orderModal.getItemList(), orderModal.getState(), CartActivity.this);
+
+                    adapter = new CartAdapter(orderModal.getItemList(), orderModal.getState(), dMargin, deliveryChargeOriginal,CartActivity.this);
                     categoryList.setAdapter(adapter);
 
+                    Log.i("GRAND TOTAL", String.valueOf(orderModal.getGrandTotal()));
 
                     TextView tv = findViewById(R.id.itemTotal);
                     tv.setText(MessageFormat.format("₹ {0}", CartAdapter.round(orderModal.getItemTotal(),2)));
 
                     tv = findViewById(R.id.totalAmount);
-                    tv.setText(String.format("₹ %s", CartAdapter.round((orderModal.getItemTotal() + orderModal.getDeliveryCost()),2)));
+                    tv.setText(String.format("₹ %s", CartAdapter.round((orderModal.getGrandTotal()),2)));
+
+                    tv = findViewById(R.id.deliveryCharges);
+                    tv.setText(String.valueOf(CartAdapter.round(orderModal.getDeliveryCost(),2)));
 
 
                     tv = findViewById(R.id.orderNumber);
                     tv.setText(order_id);
+
+
 
                     tv = findViewById(R.id.Date);
                     String pattern = "MMMM dd, yyyy hh:mm a";
@@ -338,9 +347,9 @@ public class CartActivity extends AppCompatActivity {
                 categoryList.setLayoutManager(mLayoutManager);
                 categoryList.setItemAnimator(new DefaultItemAnimator());
 
-                adapter = new CartAdapter(categoryFilterList, -1, CartActivity.this);
+                adapter = new CartAdapter(categoryFilterList, -1,dMargin, deliveryChargeOriginal,CartActivity.this);
                 categoryList.setAdapter(adapter);
-
+                amount = 0;
                 for (CartItem item : categoryFilterList) {
                     amount += item.getAmount();
                 }

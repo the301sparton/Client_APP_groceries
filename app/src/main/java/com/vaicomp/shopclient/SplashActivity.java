@@ -3,9 +3,12 @@ package com.vaicomp.shopclient;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
@@ -45,6 +49,7 @@ import es.dmoral.toasty.Toasty;
 public class SplashActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +83,7 @@ public class SplashActivity extends AppCompatActivity {
                         startActivityForResult(signInIntent, 200);
                     }
                 });
-            }
-            else{
+            } else {
                 SignInButton signInButton = findViewById(R.id.sign_in_button);
                 signInButton.setVisibility(View.GONE);
                 TextView loader = findViewById(R.id.loader);
@@ -127,8 +131,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    void updateUI(FirebaseUser account){
-        if(account != null){
+    void updateUI(FirebaseUser account) {
+        if (account != null) {
             Context context = getApplicationContext();
             preferenceManager.setUID(context, account.getUid());
             preferenceManager.setDisplayName(context, account.getDisplayName());
@@ -136,11 +140,10 @@ public class SplashActivity extends AppCompatActivity {
             preferenceManager.setPhotoUrl(context, String.valueOf(account.getPhotoUrl()));
             startActivity(new Intent(SplashActivity.this, ProfileDetailActivity.class));
             finish();
-        }
-        else{
+        } else {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             preferences.edit().clear().apply();
-            if(!false) {
+            if (!false) {
                 Toasty.error(getApplicationContext(), "Sign-In Failed :(", Toasty.LENGTH_LONG).show();
             }
         }
@@ -150,7 +153,7 @@ public class SplashActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     static void loadAllDataToLocalDB(final Activity activity) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+        Log.i("TAG", "1");
 
         db.collection("shopItemState").document("d1ajtkwauTOe8z27xdH8").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -158,78 +161,145 @@ public class SplashActivity extends AppCompatActivity {
                 final String itemState = String.valueOf(documentSnapshot.get("itemState"));
                 final String bannerUrl = String.valueOf(documentSnapshot.get("bannerURL"));
                 preferenceManager.setBannerURL(activity, bannerUrl);
-                if(!itemState.equals(preferenceManager.getItemState(activity)))
-                {
-                    db.collection("shopItems").whereGreaterThan("itemRate", 0).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
-                            if(list1.size() != 0){
-                                final AppDataBase local_db = Room.databaseBuilder(activity.getBaseContext(),
-                                        AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+                final String latestVersion = String.valueOf(documentSnapshot.get("ClientVersion"));
+                final String updateType = String.valueOf(documentSnapshot.get("clientUpdateType"));
 
-                                new AsyncTask<Void, Void, Void>() {
-                                    @Override
-                                    protected Void doInBackground(Void... voids) {
-                                        local_db.shopItemDao().nukeTable();
-                                        local_db.categoryFilterDao().nukeTable();
-                                        return null;
-                                    }
-                                }.execute();
+                try {
+                    PackageInfo pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
+                    String version = pInfo.versionName;
+                    if (version.equals(latestVersion)) {
 
-                                final ShopItem[] itemList = new ShopItem[list1.size()];
-                                int itr = 0;
-                                for(DocumentSnapshot ds : list1) {
-                                    ShopItem item = new ShopItem();
 
-                                    item.setItemId(ds.getId());
-                                    item.setItemName(String.valueOf(ds.get("itemName")));
-                                    item.setCategory(String.valueOf(ds.get("category")));
-                                    item.setImageUrl(String.valueOf(ds.get("photoUrl")));
-                                    item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
-                                    item.setAmount((double) 0);
-                                    item.setQuantity(0);
-
-                                    itemList[itr] = item;
-                                    itr++;
-                                }
-
-                                db.collection("category").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                        List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
-                                        if(list1.size() != 0) {
-                                            final CategoryFilter[] categoryFilterList = new CategoryFilter[list1.size()];
-                                            int itr = 0;
-                                            for(DocumentSnapshot ds : list1){
-                                                categoryFilterList[itr] = new CategoryFilter(String.valueOf(ds.get("categoryName")),false);
-                                                itr++;
-                                            }
-                                            new AsyncTask<Void, Void, Void>() {
-                                                @Override
-                                                protected Void doInBackground(Void... voids) {
-                                                    local_db.categoryFilterDao().insertAll(categoryFilterList);
-                                                    local_db.shopItemDao().insertAll(itemList);
-                                                    activity.startActivity(new Intent(activity, CategoryGridActivity.class));
-                                                    preferenceManager.setItemState(activity, itemState);
-                                                    activity.finish();
-                                                    return null;
-                                                }
-                                            }.execute();
-                                        }
-                                    }
-                                });
-
-                            }
+                        if (!itemState.equals(preferenceManager.getItemState(activity))) {
+                            proceedWithOutUpdate(activity, db, itemState);
+                        } else {
+                            activity.startActivity(new Intent(activity, CategoryGridActivity.class));
+                            activity.finish();
                         }
-                    });
+                    } else {
+                        Log.i("update", "YES");
+                        if (updateType.toLowerCase().equals("force")) {
+                            final AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+                            alertDialog.setTitle("Update Available!");
+                            alertDialog.setMessage("This is a mandatory update, which improves application security & overall performance.");
+                            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    try {
+                                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + activity.getPackageName())));
+                                    }
+                                    alertDialog.dismiss();
+                                    activity.finish();
+                                }
+                            });
+                            alertDialog.show();
+                        } else {
+                            final AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+                            alertDialog.setTitle("Update Available!");
+                            alertDialog.setMessage("This is a optional update, which improves application security & overall performance.");
+                            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    try {
+                                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+                                    } catch (android.content.ActivityNotFoundException anfe) {
+                                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + activity.getPackageName())));
+                                    }
+                                    alertDialog.dismiss();
+                                    activity.finish();
+                                }
+                            });
+                            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    alertDialog.dismiss();
+                                    proceedWithOutUpdate(activity, db, itemState);
+                                }
+                            });
+                            alertDialog.show();
+                        }
+
+                    }
+
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
                 }
-                else{
-                    activity.startActivity(new Intent(activity, CategoryGridActivity.class));
-                    activity.finish();
-                }
+
+
             }
         });
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private static void proceedWithOutUpdate(final Activity activity, final FirebaseFirestore db, final String itemState) {
+        db.collection("shopItems").whereGreaterThan("itemRate", 0).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                Log.i("TAG", "2");
+                if (list1.size() != 0) {
+                    final AppDataBase local_db = Room.databaseBuilder(activity.getBaseContext(),
+                            AppDataBase.class, "clientAppDB").fallbackToDestructiveMigration().build();
+
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            local_db.shopItemDao().nukeTable();
+                            local_db.categoryFilterDao().nukeTable();
+                            return null;
+                        }
+                    }.execute();
+
+                    final ShopItem[] itemList = new ShopItem[list1.size()];
+                    int itr = 0;
+                    for (DocumentSnapshot ds : list1) {
+                        ShopItem item = new ShopItem();
+
+                        item.setItemId(ds.getId());
+                        item.setItemName(String.valueOf(ds.get("itemName")));
+                        item.setCategory(String.valueOf(ds.get("category")));
+                        item.setImageUrl(String.valueOf(ds.get("photoUrl")));
+                        item.setRate(Double.valueOf(String.valueOf(ds.get("itemRate"))));
+                        item.setAmount((double) 0);
+                        item.setQuantity(0);
+                        Log.i("TAG", "loop");
+
+                        itemList[itr] = item;
+                        itr++;
+                    }
+                    Log.i("TAG", "3");
+
+                    db.collection("category").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            Log.i("TAG", "4");
+                            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                            if (list1.size() != 0) {
+                                final CategoryFilter[] categoryFilterList = new CategoryFilter[list1.size()];
+                                int itr = 0;
+                                for (DocumentSnapshot ds : list1) {
+                                    categoryFilterList[itr] = new CategoryFilter(String.valueOf(ds.get("categoryName")), false);
+                                    itr++;
+                                }
+                                new AsyncTask<Void, Void, Void>() {
+                                    @Override
+                                    protected Void doInBackground(Void... voids) {
+                                        local_db.categoryFilterDao().insertAll(categoryFilterList);
+                                        local_db.shopItemDao().insertAll(itemList);
+                                        activity.startActivity(new Intent(activity, CategoryGridActivity.class));
+                                        preferenceManager.setItemState(activity, itemState);
+                                        activity.finish();
+                                        return null;
+                                    }
+                                }.execute();
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+    }
 }

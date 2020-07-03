@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/lib/com.vaicomp.shopclient"
-    xmlns:app2="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="10dp"
     android:layout_height="match_parent"
-    tools:context=".Fragments.home.HomeFragment">
+    android:padding="10dp"
+    tools:context=".Fragments.dashboard.HistoryFragment">
 
 
 
@@ -44,13 +43,18 @@
         </FrameLayout>
 
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/filterBtn"
             android:layout_width="0dp"
             android:layout_weight="2"
-            android:padding="5dp"
-            app2:srcCompat="@drawable/ic_settings"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:fontFamily="@font/josefinsans"
+            android:gravity="center"
+            app:srcCompat="@drawable/ic_filter"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+
 
     </LinearLayout>
 
