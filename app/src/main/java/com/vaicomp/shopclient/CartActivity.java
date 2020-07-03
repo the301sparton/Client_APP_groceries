@@ -360,6 +360,9 @@ public class CartActivity extends AppCompatActivity {
                 if(amount >= dMargin){
                     deliveryCharge = 0d;
                 }
+                else{
+                    deliveryCharge = deliveryChargeOriginal;
+                }
                 tv = findViewById(R.id.deliveryCharges);
                 tv.setText(String.valueOf(deliveryCharge));
 
